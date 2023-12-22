@@ -30,9 +30,5 @@
     "require-dev": {
         "orchestra/testbench": "^8.18",
         "phpunit/phpunit": "^10.5"
-    },
-    "scripts": {
-        "test": "vendor/bin/phpunit",
-        "test-f": "vendor/bin/phpunit --filter"
     }
 }
