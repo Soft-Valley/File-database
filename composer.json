@@ -1,0 +1,38 @@
+{
+    "name": "tusharkhan/file-database",
+    "type": "library",
+    "license": "MIT",
+    "description": "A simple file based database for PHP",
+    "keywords" : ["database", "file", "php", "tusharkhan", "file-database"],
+    "autoload": {
+        "psr-4": {
+            "Tusharkhan\\FileDatabase\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "tusharkhan",
+            "email": "tushar.khan0122@gmail.com"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "TusharKhan\\FileDatabase\\Tests\\": "tests"
+        },
+        "classmap": [
+            "tests"
+        ]
+    },
+    "require": {
+        "php": ">=8.0",
+        "illuminate/support": "^10.38"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.18",
+        "phpunit/phpunit": "^10.5"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-f": "vendor/bin/phpunit --filter"
+    }
+}
