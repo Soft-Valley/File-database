@@ -37,8 +37,10 @@ class File
     public static function set($path, $content)
     {
         if (FacadesFile::exists($path)) {
-            FacadesFile::put($path, $content);
+            return (bool)FacadesFile::put($path, $content);
         }
+
+        return false;
     }
 
     public static function get($path)

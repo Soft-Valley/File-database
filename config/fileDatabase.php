@@ -8,4 +8,5 @@
 
 return [
     'database_directory' => 'FileDatabase',
+    'tables_directory' => 'tables',
 ];

@@ -32,13 +32,13 @@ class Schema
     /**
      * run
      *
-     * @return void
+     * @return bool
      */
     public function run()
     {
         $builder = new Builder();
         $builder->table = $this->table;
         $this->callback->__invoke($builder);
-        $builder->createTable($builder);
+        return $builder->createTable($builder);
     }
 }

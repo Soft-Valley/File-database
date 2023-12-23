@@ -8,6 +8,8 @@
 
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
+use Illuminate\Support\Facades\Config;
+
 class Builder
 {
     public $table;
@@ -15,6 +17,17 @@ class Builder
     public $prefix;
 
     public $columns = [];
+
+    public function prefix($prefix = '')
+    {
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    public function getTableName()
+    {
+        return $this->prefix . $this->table;
+    }
 
     public function string($name, $length = 255)
     {
@@ -150,32 +163,26 @@ class Builder
     // create table
     public function createTable($builder)
     {
-        $table = $builder->table;
+        $table = $builder->getTableName();
         $columns = $builder->columns;
-        $prefix = $builder->prefix;
-        $path = $prefix . $table . '.json';
+        $path = $table . '.json';
         $data = [];
         $data['columns'] = $columns;
         $data['primary_key'] = 'id';
         $data['auto_increment'] = 1;
-        $data['created_at'] = date('Y-m-d H:i:s');
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['deleted_at'] = null;
-        $data['data'] = [];
-        $data['indexes'] = [];
-        $data['foreign_keys'] = [];
-        $data['unique_keys'] = [];
-        $data['engine'] = 'InnoDB';
-        $data['charset'] = 'utf8mb4';
-        $data['collation'] = 'utf8mb4_unicode_ci';
-        $data['comment'] = null;
-        $data['row_format'] = 'Dynamic';
         $data['table'] = $table;
 
         $json = json_encode($data, JSON_PRETTY_PRINT);
-        dd($json);
-        if (!file_exists($path)) {
-            file_put_contents($path, $json);
-        }
+
+
+        $directoryPath = Config::get('fileDatabase.database_directory', 'FileDatabase');
+        $tablesPath = Config::get('fileDatabase.tables_directory', 'tables');
+
+        File::createDirectory($directoryPath);
+        File::createDirectory($directoryPath . '/' . $tablesPath);
+
+        File::createFile($directoryPath . '/' . $tablesPath . '/' . $path);
+
+        return File::set($directoryPath . '/' . $tablesPath . '/' . $path, $json);
     }
 }

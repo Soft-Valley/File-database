@@ -16,7 +16,7 @@ class FeatureTest extends TestCase
 {
     public function test_schema()
     {
-        $dd = Schema::create('test', function (Builder $table) {
+        $dd = Schema::create('mangoes', function (Builder $table) {
             $table->string('name');
             $table->char('char');
             $table->varchar('varchar');
@@ -24,6 +24,6 @@ class FeatureTest extends TestCase
             $table->tinyInt('tinyInt');
         })->run();
 
-        $this->assertTrue(true);
+        $this->assertTrue($dd);
     }
 }
