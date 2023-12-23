@@ -86,7 +86,7 @@ final class DataTypes
      */
     public static function isString($value)
     {
-        return is_string($value) ? self::STRING : false;
+        return ( is_string($value) && strlen($value) <= 225 ) ? self::STRING : false;
     }
 
     /**
