@@ -21,11 +21,13 @@
         },
         "classmap": [
             "tests"
+        ],
+        "files": [
+            "src/Core/Helpers/functions.php"
         ]
     },
     "require": {
-        "php": ">=8.0",
-        "illuminate/support": "^10.38"
+        "php": ">=8.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.18",
