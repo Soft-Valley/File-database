@@ -14,15 +14,51 @@ use TusharKhan\FileDatabase\Tests\TestCase;
 
 class FeatureTest extends TestCase
 {
-    public function test_schema()
+    /**
+     * @throws \Exception
+     */
+    public function test_schema_create()
     {
-        $dd = Schema::create('mangoes', function (Builder $table) {
+        $dd = Schema::process('test_table', function (Builder $table) {
             $table->string('name');
             $table->char('char');
             $table->varchar('varchar');
             $table->text('text');
             $table->tinyInt('tinyInt');
         })->run();
+
+        $this->assertTrue($dd);
+    }
+
+    public function test_schema_create_with_exception()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Table test_table already exists');
+
+        $dd = Schema::process('test_table', function (Builder $table) {
+            $table->string('name');
+            $table->char('char');
+            $table->varchar('varchar');
+            $table->text('text');
+            $table->tinyInt('tinyInt');
+        })->run();
+
+        $this->assertTrue($dd);
+    }
+
+    public function test_update_table()
+    {
+        $dd = Schema::process('test_table', function (Builder $table) {
+            $table->date('date_new');
+            $table->dateTime('date_time_new');
+        })->update();
+
+        $this->assertTrue($dd);
+    }
+
+    public function test_drop_table()
+    {
+        $dd = Schema::drop('test_table');
 
         $this->assertTrue($dd);
     }

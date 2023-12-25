@@ -21,7 +21,7 @@ class Schema
      * @param  mixed $callback
      * @return Schema
      */
-    public static function create($table, $callback)
+    public static function process($table, $callback)
     {
         $schema = new self();
         $schema->table = $table;
@@ -33,6 +33,7 @@ class Schema
      * run
      *
      * @return bool
+     * @throws \Exception
      */
     public function run()
     {
@@ -40,5 +41,31 @@ class Schema
         $builder->table = $this->table;
         $this->callback->__invoke($builder);
         return $builder->createTable($builder);
+    }
+
+    /**
+     * update
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function update()
+    {
+        $builder = new Builder();
+        $builder->table = $this->table;
+        $this->callback->__invoke($builder);
+        return $builder->updateTable($builder);
+    }
+
+    /**
+     * drop
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public static function drop($tableName)
+    {
+        $builder = new Builder();
+        return $builder->dropTable($tableName);
     }
 }

@@ -8,181 +8,85 @@
 
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
-use Illuminate\Support\Facades\Config;
+use Tusharkhan\FileDatabase\Core\Exception\TableExistsException;
+use Tusharkhan\FileDatabase\Core\Traits\BuilderHelper;
 
 class Builder
 {
-    public $table;
+    // TODO : add remove column method for update table
 
-    public $prefix;
+    use BuilderHelper;
+
+    public $table;
 
     public $columns = [];
 
-    public function prefix($prefix = '')
-    {
-        $this->prefix = $prefix;
-        return $this;
-    }
 
-    public function getTableName()
-    {
-        return $this->prefix . $this->table;
-    }
-
-    public function string($name, $length = 255)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::STRING,
-            'length' => $length
-        ];
-        return $this;
-    }
-
-    public function char($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::CHAR,
-            'length' => 1
-        ];
-        return $this;
-    }
-
-    public function varchar($name, $length = 255)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::VARCHAR,
-            'length' => $length
-        ];
-        return $this;
-    }
-
-    public function text($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::TEXT,
-            'length' => 4294967295
-        ];
-    }
-
-    public function tinyInt($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::TINYINT,
-            'length' => 3
-        ];
-    }
-
-    public function smallInt($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::SMALLINT,
-            'length' => 5
-        ];
-    }
-
-    public function mediumInt($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::MEDIUMINT,
-            'length' => 8
-        ];
-    }
-
-    public function int($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::INT,
-            'length' => 10
-        ];
-    }
-
-    public function bigInt($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::BIGINT,
-            'length' => 20
-        ];
-    }
-
-    public function binary($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::BINARY,
-            'length' => 1
-        ];
-    }
-
-    public function float($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::FLOAT,
-            'length' => 10
-        ];
-    }
-
-    public function double($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::DOUBLE,
-            'length' => 10
-        ];
-    }
-
-    public function date($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::DATE,
-            'length' => 10
-        ];
-    }
-
-    public function dateTime($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::DATETIME,
-            'length' => 19
-        ];
-    }
-
-    public function timeStamp($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::TIMESTAMP,
-            'length' => 19
-        ];
-    }
-
-    public function time($name)
-    {
-        $this->columns[$name] = [
-            'type' => DataTypes::TIME,
-            'length' => 8
-        ];
-    }
-
-    // create table
-    public function createTable($builder)
+    /**
+     * @param Builder $builder
+     * @return bool
+     * @throws TableExistsException
+     */
+    public function createTable(Builder $builder)
     {
         $table = $builder->getTableName();
+
+        if (File::exists($this->getTablePath($table))) {
+            throw new TableExistsException($table);
+        }
+
         $columns = $builder->columns;
-        $path = $table . '.json';
-        $data = [];
-        $data['columns'] = $columns;
-        $data['primary_key'] = 'id';
-        $data['auto_increment'] = 1;
-        $data['table'] = $table;
+        $this->createDirectory();
 
-        $json = json_encode($data, JSON_PRETTY_PRINT);
+        return $this->createTableAndSchema(
+            $table,
+            $this->schemaData($table, $columns)
+        );
+    }
 
+    /**
+     * @param $table
+     * @param $json
+     * @return bool
+     */
+    public function updateTable(Builder $builder)
+    {
+        $table = $builder->getTableName();
 
-        $directoryPath = Config::get('fileDatabase.database_directory', 'FileDatabase');
-        $tablesPath = Config::get('fileDatabase.tables_directory', 'tables');
+        $tableData = $this->getTableData($table);
+        $schemaData = $this->getTableData($table, '_schema');
 
-        File::createDirectory($directoryPath);
-        File::createDirectory($directoryPath . '/' . $tablesPath);
+        $columnsUpdate = $builder->columns;
 
-        File::createFile($directoryPath . '/' . $tablesPath . '/' . $path);
+        // update schema
+        $columns = array_replace($schemaData['columns'], $columnsUpdate);
 
-        return File::set($directoryPath . '/' . $tablesPath . '/' . $path, $json);
+        // check if any new fiels added
+        $newColumns = array_diff_key($columns, $schemaData['columns']);
+
+        if (!empty($tableData)) {
+            $this->addNewColumns($tableData, $newColumns);
+        }
+
+        $schemaData['columns'] = $columns;
+
+        return $this->updateTableAndSchema($table, $schemaData, $tableData);
+    }
+
+    /**
+     * @param $table
+     * @param $json
+     * @return bool
+     */
+    public function dropTable($table){
+        $tablePath = $this->getTablePath($table);
+        $tableSchemaPath = $this->getTablePath($table, '_schema');
+
+        if (File::exists($tablePath)) {
+            File::delete($tablePath);
+            File::delete($tableSchemaPath);
+            return true;
+        }
+        return false;
     }
 }
