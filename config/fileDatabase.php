@@ -7,6 +7,6 @@
 
 
 return [
-    'database_directory' => 'FileDatabase',
+    'database_directory' => 'fileDatabase',
     'tables_directory' => 'tables',
 ];

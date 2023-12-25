@@ -29,12 +29,12 @@ class UnitTest extends TestCase
 
     public function test_create_directory()
     {
-        $this->assertTrue( File::createDirectory() );
+        $this->assertTrue( File::createDirectory(storage_path('fileDatabase/tables')) );
     }
 
     public function test_create_file()
     {
-        $path = 'FileDatabase/tables/test.json';
+        $path = storage_path('fileDatabase/tables/test.json');
 
         File::createFile($path);
 

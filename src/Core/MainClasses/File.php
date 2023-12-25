@@ -17,8 +17,6 @@ class File
     // create directory with read and write permission
     public static function createDirectory($path = null)
     {
-        $path = (! $path) ? Config::get('fileDatabase.database_directory') : $path;
-
         if (!FacadesFile::exists($path)) {
             return (bool)FacadesFile::makeDirectory($path, 0777, true, true);
         }
@@ -27,11 +25,15 @@ class File
     }
 
     // create file with read and write permission
-    public static function createFile($path)
+    public static function createFile($path, $content = null)
     {
         if (!FacadesFile::exists($path)) {
-            return (bool)FacadesFile::put($path, '');
+            if (FacadesFile::put($path, $content)) {
+                return (bool)FacadesFile::chmod($path, 0777);
+            }
         }
+
+        return false;
     }
 
     public static function set($path, $content)
@@ -48,5 +50,24 @@ class File
         if (FacadesFile::exists($path)) {
             return FacadesFile::get($path);
         }
+    }
+
+    public static function delete($path)
+    {
+        if (FacadesFile::exists($path)) {
+            return (bool)FacadesFile::delete($path);
+        }
+    }
+
+    public static function deleteDirectory($path)
+    {
+        if (FacadesFile::exists($path)) {
+            return (bool)FacadesFile::deleteDirectory($path);
+        }
+    }
+
+    public static function exists($path)
+    {
+        return FacadesFile::exists($path);
     }
 }
