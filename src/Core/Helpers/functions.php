@@ -20,20 +20,12 @@ if( ! function_exists('isDate')){
 }
 
 if( ! function_exists('arrayDepth')) {
-    function arrayDepth(array $array)
+    function arrayDepth($array)
     {
-        $max_depth = 1;
-
-        foreach ($array as $value) {
-            if (is_array($value)) {
-                $depth = arrayDepth($value) + 1;
-
-                if ($depth > $max_depth) {
-                    $max_depth = $depth;
-                }
-            }
+        if (empty($array) || !is_array($array)) {
+            return 0;
         }
 
-        return $max_depth;
+        return max(\Illuminate\Support\Arr::map($array, 'arrayDepth')) + 1;
     }
 }
