@@ -9,6 +9,7 @@
 namespace TusharKhan\FileDatabase\Tests\Unit;
 
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
+use Tusharkhan\FileDatabase\Models\TestModel;
 use TusharKhan\FileDatabase\Tests\TestCase;
 
 class UnitTest extends TestCase
@@ -70,5 +71,11 @@ class UnitTest extends TestCase
         ];
 
         $this->assertEquals(4, arrayDepth($array));
+    }
+
+    public function test_anything()
+    {
+        $testModel = new TestModel();
+        $this->assertEquals('test_models', $testModel->getTable());
     }
 }

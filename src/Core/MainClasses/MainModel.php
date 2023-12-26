@@ -9,6 +9,7 @@
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use ArrayIterator;
+use Illuminate\Support\Str;
 
 class MainModel implements \IteratorAggregate
 {
@@ -19,7 +20,7 @@ class MainModel implements \IteratorAggregate
 
     protected $model;
 
-    protected $data;
+    protected $data = [];
 
     protected $timestamp = true;
 
@@ -41,5 +42,15 @@ class MainModel implements \IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->data);
+    }
+
+    public function getTable()
+    {
+        return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
+    }
+
+    public function validateData()
+    {
+        TableDataValidator::validate($this, $this->data);
     }
 }

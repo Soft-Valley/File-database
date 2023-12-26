@@ -189,9 +189,7 @@ trait BuilderHelper
 
     private function getTablePath($table, $suffix = '')
     {
-        $directoryPath = Config::get('fileDatabase.database_directory', 'fileDatabase');
-        $tablesPath = Config::get('fileDatabase.tables_directory', 'tables');
-        return storage_path($directoryPath . '/' . $tablesPath . '/' . $table . $suffix . '.json');
+        return getTablePath($table, $suffix);
     }
 
 
