@@ -46,11 +46,16 @@ class FeatureTest extends TestCase
         $this->assertTrue($dd);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function test_update_table()
     {
         $dd = Schema::process('test_table', function (Builder $table) {
             $table->date('date_new');
             $table->dateTime('date_time_new');
+            $table->string('name');
+            $table->remove('description');
         })->update();
 
         $this->assertTrue($dd);

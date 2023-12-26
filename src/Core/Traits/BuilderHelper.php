@@ -8,6 +8,7 @@
 
 namespace Tusharkhan\FileDatabase\Core\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Tusharkhan\FileDatabase\Core\MainClasses\DataTypes;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
@@ -47,6 +48,7 @@ trait BuilderHelper
             'type' => DataTypes::TEXT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function tinyInt($name, $length = 3)
@@ -55,6 +57,7 @@ trait BuilderHelper
             'type' => DataTypes::TINYINT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function smallInt($name, $length = 5)
@@ -63,6 +66,7 @@ trait BuilderHelper
             'type' => DataTypes::SMALLINT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function mediumInt($name, $length = 8)
@@ -71,6 +75,7 @@ trait BuilderHelper
             'type' => DataTypes::MEDIUMINT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function int($name, $length = 10)
@@ -79,6 +84,7 @@ trait BuilderHelper
             'type' => DataTypes::INT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function bigInt($name, $length = 20)
@@ -87,6 +93,7 @@ trait BuilderHelper
             'type' => DataTypes::BIGINT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function binary($name)
@@ -95,6 +102,7 @@ trait BuilderHelper
             'type' => DataTypes::BINARY,
             'length' => 1
         ];
+        return $this;
     }
 
     public function float($name, $length = 10)
@@ -103,6 +111,7 @@ trait BuilderHelper
             'type' => DataTypes::FLOAT,
             'length' => $length
         ];
+        return $this;
     }
 
     public function double($name, $length = 10)
@@ -111,6 +120,7 @@ trait BuilderHelper
             'type' => DataTypes::DOUBLE,
             'length' => $length
         ];
+        return $this;
     }
 
     public function date($name)
@@ -119,6 +129,7 @@ trait BuilderHelper
             'type' => DataTypes::DATE,
             'length' => 10
         ];
+        return $this;
     }
 
     public function dateTime($name)
@@ -127,6 +138,7 @@ trait BuilderHelper
             'type' => DataTypes::DATETIME,
             'length' => 19
         ];
+        return $this;
     }
 
     public function timeStamp($name)
@@ -135,6 +147,7 @@ trait BuilderHelper
             'type' => DataTypes::TIMESTAMP,
             'length' => 19
         ];
+        return $this;
     }
 
     public function time($name)
@@ -143,6 +156,34 @@ trait BuilderHelper
             'type' => DataTypes::TIME,
             'length' => 8
         ];
+        return $this;
+    }
+
+    public function remove( string|array $name)
+    {
+        if (is_array($name)) {
+            $this->removeColumns = array_merge($this->removeColumns, $name);
+        } else {
+            $this->removeColumns[] = $name;
+        }
+        return $this;
+    }
+    
+    private function removeTableColumns(mixed &$tableData)
+    {
+        Arr::map($this->removeColumns, function ($value) use (&$tableData)  {
+            $tableData = Arr::map($tableData, function ($item) use ($value) {
+                unset($item[$value]);
+                return $item;
+            });
+        });
+    }
+
+    private function removeSchemaColumns(array &$columns)
+    {
+        Arr::map($this->removeColumns, function ($value) use (&$columns)  {
+            unset($columns[$value]);
+        });
     }
 
 
@@ -205,12 +246,14 @@ trait BuilderHelper
     {
         $newColumnAdd = [];
 
-        foreach ($newColumns as $key => $value) {
-            $newColumnAdd[$key] = null;
-        }
+        if ( ! empty($tableData) ) {
+            foreach ($newColumns as $key => $value) {
+                $newColumnAdd[$key] = null;
+            }
 
-        foreach ($tableData as $key => $value) {
-            $tableData[$key] = array_merge($value, $newColumnAdd);
+            foreach ($tableData as $key => $value) {
+                $tableData[$key] = array_merge($value, $newColumnAdd);
+            }
         }
     }
 }

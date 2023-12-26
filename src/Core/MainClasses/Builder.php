@@ -19,8 +19,9 @@ class Builder
 
     public $table;
 
-    public $columns = [];
+    protected $columns = [];
 
+    protected $removeColumns = [];
 
     /**
      * @param Builder $builder
@@ -57,16 +58,17 @@ class Builder
         $schemaData = $this->getTableData($table, '_schema');
 
         $columnsUpdate = $builder->columns;
-
         // update schema
         $columns = array_replace($schemaData['columns'], $columnsUpdate);
 
         // check if any new fiels added
         $newColumns = array_diff_key($columns, $schemaData['columns']);
 
-        if (!empty($tableData)) {
-            $this->addNewColumns($tableData, $newColumns);
-        }
+        // add new columns
+        $this->addNewColumns($tableData, $newColumns);
+        // remove selected columns
+        $this->removeTableColumns($tableData);
+        $this->removeSchemaColumns($columns);
 
         $schemaData['columns'] = $columns;
 
