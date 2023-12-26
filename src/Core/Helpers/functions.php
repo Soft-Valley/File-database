@@ -18,3 +18,22 @@ if( ! function_exists('isDate')){
         return (bool) strtotime($data);
     }
 }
+
+if( ! function_exists('arrayDepth')) {
+    function arrayDepth(array $array)
+    {
+        $max_depth = 1;
+
+        foreach ($array as $value) {
+            if (is_array($value)) {
+                $depth = arrayDepth($value) + 1;
+
+                if ($depth > $max_depth) {
+                    $max_depth = $depth;
+                }
+            }
+        }
+
+        return $max_depth;
+    }
+}

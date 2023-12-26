@@ -49,4 +49,26 @@ class UnitTest extends TestCase
 
         $this->assertEquals($jsonData, $data);
     }
+
+    public function test_array_depth_function()
+    {
+        $array = [
+            'name' => 'tushar',
+            'age' => 23,
+            'address' => [
+                'city' => 'Dhaka',
+                'country' => 'Bangladesh',
+                'post_code' => [
+                    'code' => 1207,
+                    'area' => 'Mohammadpur',
+                    'house' => [
+                        'house_no' => '12',
+                        'house_name' => 'Tushar Villa'
+                    ]
+                ]
+            ]
+        ];
+
+        $this->assertEquals(4, arrayDepth($array));
+    }
 }
