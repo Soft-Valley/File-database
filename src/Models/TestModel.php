@@ -12,5 +12,5 @@ use Tusharkhan\FileDatabase\Core\MainClasses\MainModel;
 
 class TestModel extends MainModel
 {
-
+    protected $table = 'test_table';
 }

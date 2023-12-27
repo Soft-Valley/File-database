@@ -36,12 +36,36 @@ class MainModel implements \IteratorAggregate
 
     protected $append;
 
+    protected $dataInsert = [];
+
     /**
      * @inheritDoc
      */
     public function getIterator()
     {
         return new ArrayIterator($this->data);
+    }
+
+    public function __set(string $name, $value): void
+    {
+        $this->dataInsert[$name] = $value;
+    }
+
+    public function __get(string $name)
+    {
+        return $this->dataInsert[$name] ?? null;
+    }
+
+    public function create($data)
+    {
+        // add data into dataInsert
+        $this->dataInsert = array_merge($data, $this->dataInsert);
+
+        $errors = $this->validateData();
+
+        if ( count($errors) > 0 ) {
+            return $errors;
+        }
     }
 
     public function getTable()
@@ -51,6 +75,6 @@ class MainModel implements \IteratorAggregate
 
     public function validateData()
     {
-        TableDataValidator::validate($this, $this->data);
+        return TableDataValidator::validate($this, $this->dataInsert);
     }
 }

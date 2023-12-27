@@ -14,8 +14,6 @@ use Tusharkhan\FileDatabase\Core\Traits\BuilderHelper;
 
 class Builder
 {
-    // TODO : add remove column method for update table
-
     use BuilderHelper;
 
     public $table;
@@ -78,7 +76,11 @@ class Builder
 
         $schemaData['columns'] = $columns;
 
-        return $this->updateTableAndSchema($table, $schemaData, $tableData);
+        return $this->updateTableAndSchema(
+            $table,
+            $schemaData,
+            $tableData
+        );
     }
 
     /**

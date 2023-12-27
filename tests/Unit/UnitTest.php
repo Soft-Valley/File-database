@@ -75,7 +75,16 @@ class UnitTest extends TestCase
 
     public function test_anything()
     {
+        $insertData = [
+            "char" => "tushar",
+            "varchar" => "tushar",
+            "name" => "tushar",
+            "text" => "tushar",
+        ];
+
         $testModel = new TestModel();
-        $this->assertEquals('test_models', $testModel->getTable());
+        $testModel->tinyInt = 1111;
+
+        $this->assertIsArray($testModel->create($insertData));
     }
 }

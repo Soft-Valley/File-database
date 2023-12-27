@@ -234,10 +234,7 @@ trait BuilderHelper
 
     private function getTableData($table, $suffix = '')
     {
-        $tablePath = $this->getTablePath($table, $suffix);
-        if (File::exists($tablePath)) {
-            return json_decode(File::get($tablePath), true);
-        }
+        return getTableData($table, $suffix);
     }
 
     private function addNewColumns(mixed &$tableData, array $newColumns)
