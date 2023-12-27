@@ -8,6 +8,7 @@
 
 namespace TusharKhan\FileDatabase\Tests\Feature;
 
+use Tusharkhan\FileDatabase\Core\Exception\TableNotExistsException;
 use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
 use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
 use TusharKhan\FileDatabase\Tests\TestCase;
@@ -32,7 +33,7 @@ class FeatureTest extends TestCase
 
     public function test_schema_create_with_exception()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(TableNotExistsException::class);
         $this->expectExceptionMessage('Table test_table already exists');
 
         $dd = Schema::process('test_table', function (Builder $table) {
@@ -61,9 +62,23 @@ class FeatureTest extends TestCase
         $this->assertTrue($dd);
     }
 
+
     public function test_drop_table()
     {
         $dd = Schema::drop('test_table');
+
+        $this->assertTrue($dd);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function test_drop_table_with_exception()
+    {
+        $this->expectException(TableNotExistsException::class);
+        $this->expectExceptionMessage('Table gg_table not exists');
+
+        $dd = Schema::drop('gg_table');
 
         $this->assertTrue($dd);
     }

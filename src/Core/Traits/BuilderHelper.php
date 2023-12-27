@@ -189,9 +189,7 @@ trait BuilderHelper
 
     private function getTablePath($table, $suffix = '')
     {
-        $directoryPath = Config::get('fileDatabase.database_directory', 'fileDatabase');
-        $tablesPath = Config::get('fileDatabase.tables_directory', 'tables');
-        return storage_path($directoryPath . '/' . $tablesPath . '/' . $table . $suffix . '.json');
+        return getTablePath($table, $suffix);
     }
 
 
@@ -236,10 +234,7 @@ trait BuilderHelper
 
     private function getTableData($table, $suffix = '')
     {
-        $tablePath = $this->getTablePath($table, $suffix);
-        if (File::exists($tablePath)) {
-            return json_decode(File::get($tablePath), true);
-        }
+        return getTableData($table, $suffix);
     }
 
     private function addNewColumns(mixed &$tableData, array $newColumns)

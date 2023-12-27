@@ -9,12 +9,11 @@
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use Tusharkhan\FileDatabase\Core\Exception\TableExistsException;
+use Tusharkhan\FileDatabase\Core\Exception\TableNotExistsException;
 use Tusharkhan\FileDatabase\Core\Traits\BuilderHelper;
 
 class Builder
 {
-    // TODO : add remove column method for update table
-
     use BuilderHelper;
 
     public $table;
@@ -46,22 +45,27 @@ class Builder
     }
 
     /**
-     * @param $table
-     * @param $json
+     * @param Builder $builder
      * @return bool
+     * @throws TableNotExistsException
      */
     public function updateTable(Builder $builder)
     {
         $table = $builder->getTableName();
 
+        if (!File::exists($this->getTablePath($table))) {
+            throw new TableNotExistsException($table);
+        }
+
         $tableData = $this->getTableData($table);
         $schemaData = $this->getTableData($table, '_schema');
 
         $columnsUpdate = $builder->columns;
+
         // update schema
         $columns = array_replace($schemaData['columns'], $columnsUpdate);
 
-        // check if any new fiels added
+        // check if any new keys added
         $newColumns = array_diff_key($columns, $schemaData['columns']);
 
         // add new columns
@@ -72,16 +76,25 @@ class Builder
 
         $schemaData['columns'] = $columns;
 
-        return $this->updateTableAndSchema($table, $schemaData, $tableData);
+        return $this->updateTableAndSchema(
+            $table,
+            $schemaData,
+            $tableData
+        );
     }
 
     /**
      * @param $table
-     * @param $json
      * @return bool
+     * @throws TableNotExistsException
      */
     public function dropTable($table){
         $tablePath = $this->getTablePath($table);
+
+        if (!File::exists($tablePath)) {
+            throw new TableNotExistsException($table);
+        }
+
         $tableSchemaPath = $this->getTablePath($table, '_schema');
 
         if (File::exists($tablePath)) {
