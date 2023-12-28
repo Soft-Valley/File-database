@@ -4,6 +4,7 @@
     "license": "MIT",
     "description": "A simple file based database for PHP",
     "keywords" : ["database", "file", "php", "tusharkhan", "file-database"],
+    "homepage": "https://github.com/Soft-Valley/File-database",
     "autoload": {
         "psr-4": {
             "Tusharkhan\\FileDatabase\\": "src/"

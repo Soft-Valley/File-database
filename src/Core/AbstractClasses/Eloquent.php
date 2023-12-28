@@ -225,8 +225,6 @@ abstract class Eloquent
      */
     public function setDataInsert(array $dataInsert): void
     {
-        $arr = [];
-
         $this->setIsMultiDimensional(isMultidimensionalArray($dataInsert));
 
         if ($this->isMultiDimensional()) {
