@@ -10,6 +10,7 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Exception\SchemaNotFoundException;
 
 class TableDataValidator
 {
@@ -17,9 +18,29 @@ class TableDataValidator
     public static function validate(MainModel $model, $data)
     {
         $schemaData = getTableData($model->getTable(), '_schema');
+
+        if( ! $schemaData ){
+            throw new SchemaNotFoundException($model->getTable() . '_schema');
+        }
+
+        $model->setSchemaData($schemaData);
+
         $schemaDataColumns = $schemaData['columns'];
         $errors = [];
 
+        if ( isMultidimensionalArray($data) ){
+            foreach ($data as $key => $value) {
+                $errors = self::checkErrors($value, $schemaDataColumns, $errors);
+            }
+        } else {
+            $errors = self::checkErrors($data, $schemaDataColumns, $errors);
+        }
+
+        return $errors;
+    }
+
+    private static function checkErrors($data, $schemaDataColumns, &$errors)
+    {
         Arr::map($data, function($value, $key) use ($schemaDataColumns, &$errors){
             // check if the key exists in schema
             if( ! array_key_exists($key, $schemaDataColumns) ){

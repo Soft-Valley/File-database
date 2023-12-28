@@ -38,6 +38,25 @@ class MainModel implements \IteratorAggregate
 
     protected $dataInsert = [];
 
+
+    private $schemaData;
+
+    /**
+     * @return mixed
+     */
+    public function getSchemaData()
+    {
+        return $this->schemaData;
+    }
+
+    /**
+     * @param mixed $schemaData
+     */
+    public function setSchemaData($schemaData): void
+    {
+        $this->schemaData = $schemaData;
+    }
+
     /**
      * @inheritDoc
      */
@@ -58,14 +77,25 @@ class MainModel implements \IteratorAggregate
 
     public function create($data)
     {
+        $arr = [];
         // add data into dataInsert
-        $this->dataInsert = array_merge($data, $this->dataInsert);
+        if ( isMultidimensionalArray($data) ){
+            foreach ($data as $key => $value) {
+                $arr[] = array_merge($value, $this->dataInsert);
+            }
+        } else {
+            $arr[] = array_merge($data, $this->dataInsert);
+        }
+
+        $this->dataInsert = $arr;
 
         $errors = $this->validateData();
 
         if ( count($errors) > 0 ) {
             return $errors;
         }
+
+        $this->processDataToInsert();
     }
 
     public function getTable()
@@ -76,5 +106,10 @@ class MainModel implements \IteratorAggregate
     public function validateData()
     {
         return TableDataValidator::validate($this, $this->dataInsert);
+    }
+
+    private function processDataToInsert()
+    {
+        dd($this->getSchemaData(), $this->dataInsert);
     }
 }

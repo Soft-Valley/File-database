@@ -20,12 +20,13 @@ class FeatureTest extends TestCase
      */
     public function test_schema_create()
     {
-        $dd = Schema::process('test_table', function (Builder $table) {
+        $dd = Schema::process('test_models', function (Builder $table) {
             $table->string('name');
             $table->char('char');
             $table->varchar('varchar');
             $table->text('text');
             $table->tinyInt('tinyInt');
+            $table->primary('test_models_id');
         })->run();
 
         $this->assertTrue($dd);
@@ -65,7 +66,7 @@ class FeatureTest extends TestCase
 
     public function test_drop_table()
     {
-        $dd = Schema::drop('test_table');
+        $dd = Schema::drop('test_models');
 
         $this->assertTrue($dd);
     }

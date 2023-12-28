@@ -15,6 +15,12 @@ use Tusharkhan\FileDatabase\Core\MainClasses\File;
 
 trait BuilderHelper
 {
+    public function primary($name)
+    {
+        $this->primaryKey = $name;
+        return $this;
+    }
+
     public function string($name, $length = 255)
     {
         $this->columns[$name] = [
@@ -216,7 +222,7 @@ trait BuilderHelper
     private function schemaData($table, $columns){
         $data = [];
         $data['columns'] = $columns;
-        $data['primary_key'] = 'id';
+        $data['primary_key'] = $this->primaryKey;
         $data['auto_increment'] = 1;
         $data['table'] = $table;
 

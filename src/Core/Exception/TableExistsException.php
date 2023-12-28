@@ -8,9 +8,11 @@
 
 namespace Tusharkhan\FileDatabase\Core\Exception;
 
+use Throwable;
+
 class TableExistsException extends \Exception
 {
-    public function __construct($table , $code = 0, \Throwable $previous = null)
+    public function __construct($table , $code = 0, Throwable $previous = null)
     {
         $message = "Table $table already exists";
         parent::__construct($message, $code, $previous);

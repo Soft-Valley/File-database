@@ -8,6 +8,7 @@
 
 namespace TusharKhan\FileDatabase\Tests\Unit;
 
+use Illuminate\Support\Arr;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
 use Tusharkhan\FileDatabase\Models\TestModel;
 use TusharKhan\FileDatabase\Tests\TestCase;
@@ -76,15 +77,31 @@ class UnitTest extends TestCase
     public function test_anything()
     {
         $insertData = [
-            "char" => "tushar",
-            "varchar" => "tushar",
-            "name" => "tushar",
-            "text" => "tushar",
+            [
+                "char" => "t",
+                "varchar" => "tushar",
+                "name" => "tushar",
+                "text" => "tushar",
+            ],
+            [
+                "char" => "t",
+                "varchar" => "tushar",
+                "name" => "tushar",
+                "text" => "tushar",
+            ]
         ];
+
+//        $insertData = [
+//            "char" => "t",
+//            "varchar" => "tushar",
+//            "name" => "tushar",
+//            "text" => "tushar",
+//        ];
 
         $testModel = new TestModel();
         $testModel->tinyInt = 1111;
 
+        dd($testModel->create($insertData));
         $this->assertIsArray($testModel->create($insertData));
     }
 }

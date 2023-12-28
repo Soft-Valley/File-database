@@ -53,3 +53,16 @@ if( ! function_exists('getTableData') ) {
         return [];
     }
 }
+
+if( ! function_exists('isMultidimensionalArray') ) {
+    function isMultidimensionalArray($array)
+    {
+        foreach ($array as $element) {
+            if (is_array($element)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
