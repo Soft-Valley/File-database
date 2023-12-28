@@ -13,4 +13,6 @@ use Tusharkhan\FileDatabase\Core\MainClasses\MainModel;
 class TestModel extends MainModel
 {
     protected $primaryKey = 'test_models_id';
+
+    protected $fillable = ['*'];
 }

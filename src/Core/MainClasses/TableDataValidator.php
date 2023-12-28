@@ -28,12 +28,8 @@ class TableDataValidator
         $schemaDataColumns = $schemaData['columns'];
         $errors = [];
 
-        if ( isMultidimensionalArray($data) ){
-            foreach ($data as $key => $value) {
-                $errors = self::checkErrors($value, $schemaDataColumns, $errors);
-            }
-        } else {
-            $errors = self::checkErrors($data, $schemaDataColumns, $errors);
+        foreach ($data as $key => $value) {
+            $errors = self::checkErrors($value, $schemaDataColumns, $errors);
         }
 
         return $errors;

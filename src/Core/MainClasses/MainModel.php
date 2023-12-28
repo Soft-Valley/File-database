@@ -9,9 +9,11 @@
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use ArrayIterator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 
-class MainModel implements \IteratorAggregate
+class MainModel implements \IteratorAggregate, Eloquent
 {
 
     protected $table;
@@ -32,14 +34,31 @@ class MainModel implements \IteratorAggregate
 
     protected $relations;
 
-    protected $fillable = [];
+    protected $fillable = ['*'];
 
     protected $append;
 
     protected $dataInsert = [];
 
-
     private $schemaData;
+
+    private $previousData;
+
+    /**
+     * @return mixed
+     */
+    public function getPreviousData()
+    {
+        return $this->previousData;
+    }
+
+    /**
+     * @param mixed $previousData
+     */
+    public function setPreviousData($previousData): void
+    {
+        $this->previousData = $previousData;
+    }
 
     /**
      * @return mixed
@@ -77,17 +96,7 @@ class MainModel implements \IteratorAggregate
 
     public function create($data)
     {
-        $arr = [];
-        // add data into dataInsert
-        if ( isMultidimensionalArray($data) ){
-            foreach ($data as $key => $value) {
-                $arr[] = array_merge($value, $this->dataInsert);
-            }
-        } else {
-            $arr[] = array_merge($data, $this->dataInsert);
-        }
-
-        $this->dataInsert = $arr;
+        $this->setDataInsert($data);
 
         $errors = $this->validateData();
 
@@ -95,7 +104,12 @@ class MainModel implements \IteratorAggregate
             return $errors;
         }
 
-        $this->processDataToInsert();
+        $this->processDataToInsertTable();
+
+        $tablePath = getTablePath($this->getTable());
+
+
+        return File::set($tablePath, json_encode($this->data, JSON_PRETTY_PRINT)) ? $this->data : false;
     }
 
     public function getTable()
@@ -108,8 +122,51 @@ class MainModel implements \IteratorAggregate
         return TableDataValidator::validate($this, $this->dataInsert);
     }
 
-    private function processDataToInsert()
+    private function processDataToInsertTable()
     {
-        dd($this->getSchemaData(), $this->dataInsert);
+        $tableData = getTableData($this->getTable());
+
+        $this->setPreviousData($tableData);
+
+        $lastId = 0;
+        if ( ! empty($tableData) ) {
+            $lastId = end($tableData)[$this->primaryKey];
+        }
+
+        $newData = Arr::map($this->dataInsert, function($value, $key) use (&$lastId){
+
+            if ( ! in_array('*', $this->fillable) ){
+                $value = Arr::only($value, $this->fillable);
+            }
+
+            $newInsertArr = [
+                $this->primaryKey => $lastId + 1
+            ];
+
+            if ( $this->timestamp ){
+                $newInsertArr['created_at'] = date('Y-m-d H:i:s');
+                $newInsertArr['updated_at'] = date('Y-m-d H:i:s');
+            }
+
+            $value = array_merge($value, $newInsertArr);
+
+            $lastId++;
+
+            return $value;
+        });
+
+        // merge new data with old data
+        $this->data = array_merge($tableData, $newData);
+    }
+
+    private function setDataInsert($data)
+    {
+        if ( isMultidimensionalArray($data) ){
+            $this->dataInsert = Arr::map($data, function($value, $key){
+                return array_merge($value, $this->dataInsert);
+            });
+        } else {
+            $this->dataInsert = [array_merge($data, $this->dataInsert)];
+        }
     }
 }
