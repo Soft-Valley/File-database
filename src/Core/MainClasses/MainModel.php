@@ -9,72 +9,47 @@
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use ArrayIterator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
+use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
 
-class MainModel implements \IteratorAggregate
+class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 {
-
-    protected $table;
-
-    protected $structure;
-
-    protected $model;
-
-    protected $data = [];
-
-    protected $timestamp = true;
-
-    protected $attribute;
-
-    protected $primaryKey = 'id';
-
-    protected $incrementing = true;
-
-    protected $relations;
-
-    protected $fillable = [];
-
-    protected $append;
-
-    protected $dataInsert = [];
-
-    /**
-     * @inheritDoc
-     */
     public function getIterator()
     {
         return new ArrayIterator($this->data);
     }
 
-    public function __set(string $name, $value): void
-    {
-        $this->dataInsert[$name] = $value;
-    }
-
-    public function __get(string $name)
-    {
-        return $this->dataInsert[$name] ?? null;
-    }
-
     public function create($data)
     {
-        // add data into dataInsert
-        $this->dataInsert = array_merge($data, $this->dataInsert);
+        $this->setDataInsert($data);
+        return $this->save();
+    }
 
+    public function validateData($data = null)
+    {
+        return TableDataValidator::validate($this, $data ?? $this->getDataInsert());
+    }
+
+    public function delete($id)
+    {
+        // TODO: Implement delete() method.
+    }
+
+    public function update($id, $data)
+    {
+        // TODO: Implement update() method.
+    }
+
+    public function save()
+    {
         $errors = $this->validateData();
 
-        if ( count($errors) > 0 ) {
+        if ($errors) {
             return $errors;
         }
-    }
 
-    public function getTable()
-    {
-        return $this->table ?? Str::snake(Str::pluralStudly(class_basename($this)));
-    }
-
-    public function validateData()
-    {
-        return TableDataValidator::validate($this, $this->dataInsert);
+        return $this->insertIntoTable();
     }
 }

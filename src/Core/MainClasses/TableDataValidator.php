@@ -10,16 +10,42 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Exception\SchemaNotFoundException;
+use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 
 class TableDataValidator
 {
 
-    public static function validate(MainModel $model, $data)
+    public static function validate(Eloquent $model, $data)
     {
         $schemaData = getTableData($model->getTable(), '_schema');
+
+        if( ! $schemaData ){
+            throw new SchemaNotFoundException($model->getTable() . '_schema');
+        }
+
+
+        $model->setSchemaData($schemaData);
+
         $schemaDataColumns = $schemaData['columns'];
         $errors = [];
 
+        if ( ! $model->isMultiDimensional() ) {
+            $data = [$data];
+            $model->setDataInsert($data);
+        }
+
+        foreach ($data as $key => $value) {
+            $errors = self::checkErrors($value, $schemaDataColumns, $errors);
+        }
+
+        if( $errors ) return $errors;
+
+        self::processDataToInsertTable($model);
+    }
+
+    private static function checkErrors($data, $schemaDataColumns, &$errors)
+    {
         Arr::map($data, function($value, $key) use ($schemaDataColumns, &$errors){
             // check if the key exists in schema
             if( ! array_key_exists($key, $schemaDataColumns) ){
@@ -49,5 +75,42 @@ class TableDataValidator
         });
 
         return $errors;
+    }
+
+    private static function processDataToInsertTable(Eloquent $model)
+    {
+        $tableData = getTableData($model->getTable());
+        $model->setPreviousData($tableData ?? []);
+
+        $lastId = 0;
+        if (!empty($tableData)) {
+            $lastId = end($tableData)[$model->getPrimaryKey()];
+        }
+
+        $newData = Arr::map($model->getDataInsert(), function ($value, $key) use (&$lastId, $model) {
+
+            if (!in_array('*', $model->getFillable())) {
+                $value = Arr::only($value, $model->getFillable());
+            }
+
+            $newInsertArr = [
+                $model->getPrimaryKey() => $lastId + 1
+            ];
+
+            if ($model->isTimestamp()) {
+                $newInsertArr['created_at'] = date('Y-m-d H:i:s');
+                $newInsertArr['updated_at'] = date('Y-m-d H:i:s');
+            }
+
+            $value = array_merge($value, $newInsertArr);
+
+            $lastId++;
+
+            return $value;
+        });
+
+
+        // merge new data with old data
+        $model->setData($newData);
     }
 }

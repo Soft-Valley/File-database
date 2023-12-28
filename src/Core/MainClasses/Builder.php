@@ -22,6 +22,8 @@ class Builder
 
     protected $removeColumns = [];
 
+    protected $primaryKey = 'id';
+
     /**
      * @param Builder $builder
      * @return bool

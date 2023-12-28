@@ -53,3 +53,25 @@ if( ! function_exists('getTableData') ) {
         return [];
     }
 }
+
+if( ! function_exists('isMultidimensionalArray') ) {
+    function isMultidimensionalArray($array)
+    {
+        foreach ($array as $element) {
+            if (is_array($element)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if( ! function_exists('sortMultidimensionalArray') ) {
+    function sortMultidimensionalArray(&$array, $key, $sortType = SORT_ASC)
+    {
+        $sortKeys = array_column($array, $key);
+
+        array_multisort($sortKeys, $sortType, $array);
+    }
+}
