@@ -66,3 +66,12 @@ if( ! function_exists('isMultidimensionalArray') ) {
         return false;
     }
 }
+
+if( ! function_exists('sortMultidimensionalArray') ) {
+    function sortMultidimensionalArray(&$array, $key, $sortType = SORT_ASC)
+    {
+        $sortKeys = array_column($array, $key);
+
+        array_multisort($sortKeys, $sortType, $array);
+    }
+}

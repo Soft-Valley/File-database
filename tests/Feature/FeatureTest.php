@@ -11,6 +11,7 @@ namespace TusharKhan\FileDatabase\Tests\Feature;
 use Tusharkhan\FileDatabase\Core\Exception\TableNotExistsException;
 use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
 use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
+use Tusharkhan\FileDatabase\Models\TestModel;
 use TusharKhan\FileDatabase\Tests\TestCase;
 
 class FeatureTest extends TestCase
@@ -82,5 +83,18 @@ class FeatureTest extends TestCase
         $dd = Schema::drop('gg_table');
 
         $this->assertTrue($dd);
+    }
+
+    public function test_eloquent_method()
+    {
+        $testModel = new TestModel();
+        $testModel->name = 'tushar';
+        $testModel->char = 't';
+        $testModel->varchar = 'tushar';
+        $testModel->text = 'tushar';
+        $testModel->tinyInt = 11;
+
+
+        $this->assertIsArray($testModel->save());
     }
 }

@@ -24,16 +24,24 @@ class TableDataValidator
             throw new SchemaNotFoundException($model->getTable() . '_schema');
         }
 
+
         $model->setSchemaData($schemaData);
 
         $schemaDataColumns = $schemaData['columns'];
         $errors = [];
 
+        if ( ! $model->isMultiDimensional() ) {
+            $data = [$data];
+            $model->setDataInsert($data);
+        }
+
         foreach ($data as $key => $value) {
             $errors = self::checkErrors($value, $schemaDataColumns, $errors);
         }
 
-        return $errors;
+        if( $errors ) return $errors;
+
+        self::processDataToInsertTable($model);
     }
 
     private static function checkErrors($data, $schemaDataColumns, &$errors)
@@ -67,5 +75,42 @@ class TableDataValidator
         });
 
         return $errors;
+    }
+
+    private static function processDataToInsertTable(Eloquent $model)
+    {
+        $tableData = getTableData($model->getTable());
+        $model->setPreviousData($tableData ?? []);
+
+        $lastId = 0;
+        if (!empty($tableData)) {
+            $lastId = end($tableData)[$model->getPrimaryKey()];
+        }
+
+        $newData = Arr::map($model->getDataInsert(), function ($value, $key) use (&$lastId, $model) {
+
+            if (!in_array('*', $model->getFillable())) {
+                $value = Arr::only($value, $model->getFillable());
+            }
+
+            $newInsertArr = [
+                $model->getPrimaryKey() => $lastId + 1
+            ];
+
+            if ($model->isTimestamp()) {
+                $newInsertArr['created_at'] = date('Y-m-d H:i:s');
+                $newInsertArr['updated_at'] = date('Y-m-d H:i:s');
+            }
+
+            $value = array_merge($value, $newInsertArr);
+
+            $lastId++;
+
+            return $value;
+        });
+
+
+        // merge new data with old data
+        $model->setData($newData);
     }
 }
