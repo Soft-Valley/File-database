@@ -91,16 +91,16 @@ class UnitTest extends TestCase
             ]
         ];
 
-        $insertData = [
-            "char" => "t",
-            "varchar" => "tushar",
-            "name" => "tushar",
-            "text" => "tushar",
-        ];
+//        $insertData = [
+//            "char" => "t",
+//            "varchar" => "tushar",
+//            "name" => "tushar",
+//            "text" => "tushar",
+//        ];
 
         $testModel = new TestModel();
         $testModel->tinyInt = 11;
 
-        $this->assertIsArray($testModel->create($insertData));
+        $this->assertCount(count($insertData), $testModel->create($insertData));
     }
 }

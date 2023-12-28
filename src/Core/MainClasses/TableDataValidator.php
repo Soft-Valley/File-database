@@ -11,11 +11,12 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Tusharkhan\FileDatabase\Core\Exception\SchemaNotFoundException;
+use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 
 class TableDataValidator
 {
 
-    public static function validate(MainModel $model, $data)
+    public static function validate(Eloquent $model, $data)
     {
         $schemaData = getTableData($model->getTable(), '_schema');
 

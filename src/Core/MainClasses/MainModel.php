@@ -108,8 +108,7 @@ class MainModel implements \IteratorAggregate, Eloquent
 
         $tablePath = getTablePath($this->getTable());
 
-
-        return File::set($tablePath, json_encode($this->data, JSON_PRETTY_PRINT)) ? $this->data : false;
+        return File::set($tablePath, json_encode(array_merge($this->data, $this->getPreviousData()), JSON_PRETTY_PRINT)) ? $this->data : [];
     }
 
     public function getTable()
@@ -156,7 +155,7 @@ class MainModel implements \IteratorAggregate, Eloquent
         });
 
         // merge new data with old data
-        $this->data = array_merge($tableData, $newData);
+        $this->data = $newData;
     }
 
     private function setDataInsert($data)
