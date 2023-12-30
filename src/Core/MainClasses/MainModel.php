@@ -34,7 +34,16 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
     public function delete($id)
     {
-        // TODO: Implement delete() method.
+        $tablePath = $this->getTable();
+        $tableData = getTableData($tablePath);
+
+        $data = Arr::where($tableData, function ($value, $key) use ($id) {
+            return $value[$this->getPrimaryKey()] != $id;
+        });
+
+        $this->setData(array_values($data));
+
+        return count($this->insertIntoTable()) > 0;
     }
 
     public function update($id, $data)

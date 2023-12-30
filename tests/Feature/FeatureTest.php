@@ -97,4 +97,11 @@ class FeatureTest extends TestCase
 
         $this->assertIsArray($testModel->save());
     }
+
+    public function test_delete_record()
+    {
+        $testModel = new TestModel();
+
+        $this->assertTrue($testModel->delete(1));
+    }
 }

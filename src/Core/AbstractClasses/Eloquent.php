@@ -40,7 +40,7 @@ abstract class Eloquent
 
     private $schemaData;
 
-    private $previousData;
+    private $previousData = [];
 
     private $isMultiDimensional = false;
 
