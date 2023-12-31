@@ -13,9 +13,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
+use Tusharkhan\FileDatabase\Core\Traits\MainQuery;
 
 class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 {
+    use MainQuery;
+
     public function getIterator()
     {
         return new ArrayIterator($this->data);
