@@ -48,7 +48,38 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
     public function update($id, $data)
     {
-        // TODO: Implement update() method.
+        if ( ! isset($data['updated_at']) )
+        {
+            $data['updated_at'] = date('Y-m-d H:i:s');
+        }
+
+        $tablePath = $this->getTable();
+        $tableData = getTableData($tablePath);
+        $selectedKey = null;
+
+        $searchData = Arr::where($tableData, function ($value, $key) use ($id, &$selectedKey) {
+            if ($value[$this->getPrimaryKey()] == $id) {
+                $selectedKey = $key;
+                return $value;
+            }
+
+            return null;
+        });
+
+        if ( $searchData ){
+            $arr = array_values($searchData)[0];
+            Arr::map($data, function ($value, $key) use (&$arr) {
+                $arr[$key] = $value;
+            });
+
+            $tableData[$selectedKey] = $arr;
+
+            $this->setData($tableData);
+
+            return count($this->insertIntoTable()) > 0;
+        }
+
+        return false;
     }
 
     public function save()

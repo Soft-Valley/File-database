@@ -104,4 +104,17 @@ class FeatureTest extends TestCase
 
         $this->assertTrue($testModel->delete(1));
     }
+
+    public function test_update_record()
+    {
+        $testModel = new TestModel();
+
+        $this->assertTrue($testModel->update(3, [
+            'name' => 'tushar 2',
+            'char' => 'f',
+            'varchar' => 'tushar',
+            'text' => 'tushar',
+            'tinyInt' => 11
+        ]));
+    }
 }

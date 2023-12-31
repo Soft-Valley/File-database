@@ -45,11 +45,20 @@ abstract class Eloquent
     private $isMultiDimensional = false;
 
 
+    /**
+     * @param string $name
+     * @param $value
+     * @return void
+     */
     public function __set(string $name, $value): void
     {
         $this->dataInsert[$name] = $value;
     }
 
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
     public function __get(string $name)
     {
         return $this->dataInsert[$name] ?? null;
@@ -285,6 +294,9 @@ abstract class Eloquent
         $this->schemaData = $schemaData;
     }
 
+    /**
+     * @return array|mixed
+     */
     public function insertIntoTable()
     {
         $tablePath = getTablePath($this->getTable());
@@ -297,11 +309,18 @@ abstract class Eloquent
             ? $this->data : [];
     }
 
+    /**
+     * @return bool
+     */
     public function isMultiDimensional(): bool
     {
         return $this->isMultiDimensional;
     }
 
+    /**
+     * @param bool $isMultiDimensional
+     * @return void
+     */
     public function setIsMultiDimensional(bool $isMultiDimensional): void
     {
         $this->isMultiDimensional = $isMultiDimensional;
