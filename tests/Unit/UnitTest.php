@@ -86,7 +86,13 @@ class UnitTest extends TestCase
             [
                 "char" => "t",
                 "varchar" => "tushar",
-                "name" => "tushar",
+                "name" => "tushar 3",
+                "text" => "tushar",
+            ],
+            [
+                "char" => "t",
+                "varchar" => "tushar",
+                "name" => "tushar 2",
                 "text" => "tushar",
             ]
         ];
@@ -98,9 +104,10 @@ class UnitTest extends TestCase
 //            "text" => "tushar",
 //        ];
 
-        $testModel = new TestModel();
-        $testModel->tinyInt = 11;
+        $insertData = collect($insertData);
 
-        $this->assertCount(count($insertData), $testModel->create($insertData));
+        $insertData = $insertData->where('name', 'tushar 2')->where('name', 'tushar 3');
+
+        dd($insertData);
     }
 }

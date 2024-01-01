@@ -117,4 +117,12 @@ class FeatureTest extends TestCase
             'tinyInt' => 11
         ]));
     }
+
+    public function test_call_query_methods()
+    {
+        $testModelQuery = TestModel::where('name', 'tushar 2')
+            ->where('name', 'tushar 3')
+            ->get();
+        dd($testModelQuery);
+    }
 }

@@ -10,14 +10,43 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use ArrayIterator;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
-use Tusharkhan\FileDatabase\Core\Traits\MainQuery;
 
 class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 {
-    use MainQuery;
+
+//    public static function query()
+//    {
+//        $instance = new static();
+//        $getTable = $instance->getTable();
+//        $tableData = getTableData($getTable);
+//        $instance->setData(collect($tableData));
+//
+//        return $instance->getData();
+//    }
+
+    public static function __callStatic(string $name, array $arguments)
+    {
+        $instance = new static();
+
+        if ( $name != 'with' )
+            $instance->setQuery([$name, $arguments]);
+        else
+            $instance->setRelations($arguments);
+
+        return $instance;
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        if ( $name != 'with' )
+            $this->setQuery([$name, $arguments]);
+        else
+            $this->setRelations($arguments);
+
+        return $this;
+    }
 
     public function getIterator()
     {
@@ -94,5 +123,32 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         }
 
         return $this->insertIntoTable();
+    }
+
+    // fetch all data from table
+    public static function all()
+    {
+        $instance = new static();
+        $tablePath = $instance->getTable();
+        $tableData = getTableData($tablePath);
+
+        $instance->setData(collect($tableData));
+
+        return $instance->data;
+    }
+
+    // fetch data from table by id
+    public static function find($id)
+    {
+        $instance = new static();
+        $tablePath = $instance->getTable();
+        $tableData = getTableData($tablePath);
+        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance) {
+            return $value[$instance->getPrimaryKey()] == $id;
+        });
+
+        $instance->setData(collect($data[0] ?? []));
+
+        return $instance->data;
     }
 }
