@@ -9,6 +9,7 @@
 namespace TusharKhan\FileDatabase\Tests\Unit;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
 use Tusharkhan\FileDatabase\Models\TestModel;
 use TusharKhan\FileDatabase\Tests\TestCase;
@@ -78,23 +79,26 @@ class UnitTest extends TestCase
     {
         $insertData = [
             [
-                "char" => "t",
-                "varchar" => "tushar",
-                "name" => "tushar",
-                "text" => "tushar",
+                'belongsToMany' => [
+                    'related' => 'related',
+                    'table' => '$table',
+                    'foreignKey' => '$foreignKey',
+                    'relatedKey' => '$relatedKey',
+                    'relation' => '$relation'
+                ]
             ],
-            [
-                "char" => "t",
-                "varchar" => "tushar",
-                "name" => "tushar 3",
-                "text" => "tushar",
-            ],
-            [
-                "char" => "t",
-                "varchar" => "tushar",
-                "name" => "tushar 2",
-                "text" => "tushar",
-            ]
+//            [
+//                "char" => "t",
+//                "varchar" => "tushar",
+//                "name" => "tushar 3",
+//                "text" => "tushar",
+//            ],
+//            [
+//                "char" => "t",
+//                "varchar" => "tushar",
+//                "name" => "tushar 2",
+//                "text" => "tushar",
+//            ]
         ];
 
 //        $insertData = [
@@ -104,10 +108,15 @@ class UnitTest extends TestCase
 //            "text" => "tushar",
 //        ];
 
-        $insertData = collect($insertData);
+        $insertData = Collection::wrap([
+            [
+                "char" , "t",
+                "varchar" , "tushar"
+            ]
+        ]);
 
-        $insertData = $insertData->where('name', 'tushar 2')->where('name', 'tushar 3');
+//        $insertData = $insertData->where('name', 'tushar 2')->where('name', 'tushar 3');
 
-        dd($insertData);
+        dd(getTableData('pages'));
     }
 }

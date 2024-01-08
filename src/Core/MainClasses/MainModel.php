@@ -16,36 +16,28 @@ use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
 class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 {
 
-//    public static function query()
-//    {
-//        $instance = new static();
-//        $getTable = $instance->getTable();
-//        $tableData = getTableData($getTable);
-//        $instance->setData(collect($tableData));
-//
-//        return $instance->getData();
-//    }
-
     public static function __callStatic(string $name, array $arguments)
     {
         $instance = new static();
 
-        if ( $name != 'with' )
-            $instance->setQuery([$name, $arguments]);
-        else
-            $instance->setRelations($arguments);
+        $instance->setRelationsAndQuery($instance, $name, $arguments);
 
         return $instance;
     }
 
     public function __call(string $name, array $arguments)
     {
-        if ( $name != 'with' )
-            $this->setQuery([$name, $arguments]);
-        else
-            $this->setRelations($arguments);
+        $this->setRelationsAndQuery($this, $name, $arguments);
 
         return $this;
+    }
+
+    private function setRelationsAndQuery(&$instance, string $name, array $arguments)
+    {
+        if ( $name != 'with' )
+            $instance->setQuery([$name, $arguments]);
+        else
+            $instance->setWith($arguments);
     }
 
     public function getIterator()

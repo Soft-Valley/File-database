@@ -9,32 +9,34 @@
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use Illuminate\Support\Collection;
+use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent;
 use Tusharkhan\FileDatabase\Core\Exception\MethodNotFoundException;
+use Tusharkhan\FileDatabase\Core\Exception\ModelNotFoundException;
 
 class Query
 {
 
     protected $model;
 
-    private $query;
-
-    private $relations;
+    private $with;
 
     private $tableData;
 
-    public function __construct($model)
+    private $currentRelationName;
+
+    private $currentWithName;
+
+    public function __construct(Eloquent $model)
     {
         $this->model = $model;
     }
 
-    public function filterDataFromModel()
+    public function filterDataFromModel(): array|Collection
     {
         $tablePath = $this->model->getTable();
         $this->tableData = collect(getTableData($tablePath));
 
         $allQuery = $this->model->getQuery();
-
-        $allRelations = $this->model->getRelations();
 
         $allData = $this->tableData;
 
@@ -55,6 +57,96 @@ class Query
 
         $this->model->setData($allData);
 
+        $this->addRelationsData();
+
         return $this->model->getData();
+    }
+
+    public function addRelationsData()
+    {
+        $this->with = $this->model->getWith();
+
+        if (count($this->with) > 0) {
+            foreach ($this->with as $relation) {
+                $this->addRelationData($relation);
+            }
+        }
+    }
+
+    private function addRelationData(mixed $relation)
+    {
+        // check if relation exists, if exists then call it with arguments and if not then throw exception
+        if (!method_exists($this->model::class ,$relation)) {
+            throw new MethodNotFoundException($relation, $this->model::class);
+        }
+
+        $this->currentWithName = $relation;
+        $relationData = $this->model->$relation();
+
+        $this->relations = $this->model->getRelations();
+
+        $relationData = $this->getRelationData($relationData);
+
+        $this->model->setData($relationData);
+    }
+
+    private function getRelationData(mixed $relation)
+    {
+        $relationModel = $this->getRelationModel($relation);
+
+        $relationTable = $relationModel->getTable();
+
+        $relationTableData = getTableData($relationTable);
+
+        $relationTableData = collect($relationTableData);
+
+        return $this->filterRelationData($relationTableData, $relationModel, $relation);
+    }
+
+    private function getRelationModel(mixed $relation)
+    {
+        $relationName = array_key_first($relation);
+
+        $relationModel = $relation[$relationName]['related'];
+
+        $this->currentRelationName = $relationName;
+
+        // check if class exists, if exists then call it with arguments and if not then throw exception
+        if (!class_exists($relationModel)) {
+            throw new ModelNotFoundException($relationModel);
+        }
+
+        // return new instance of relation model
+        return new $relationModel();
+    }
+
+    private function filterRelationData(Collection $relationTableData, mixed $relationModel, mixed $relation)
+    {
+        $foreignKey = $relation[$this->currentRelationName]['foreignKey'];
+        $localKey = $relation[$this->currentRelationName]['localKey'];
+
+        return $this->addRelationDataByKey($relationTableData,  $foreignKey, $localKey);
+    }
+
+    private function addRelationDataByKey(Collection $relationTableData,  $foreignKey, $localKey)
+    {
+        return $this->model->getData()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
+            //$item = collect($item);
+
+            switch ($this->currentRelationName) {
+                case 'belongsTo':
+                case 'hasOne':
+                    $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->first();
+                    break;
+                case 'hasMany':
+                    $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->values();
+                    break;
+                case 'belongsToMany':
+                    $item->put($this->currentWithName, $relationTableData->whereIn($localKey, $item[$foreignKey])->values());
+                    break;
+            }
+
+            return $item;
+        });
     }
 }

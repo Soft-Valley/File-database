@@ -11,14 +11,18 @@ namespace Tusharkhan\FileDatabase\Core\AbstractClasses;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Exception\MethodNotFoundException;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
 use Tusharkhan\FileDatabase\Core\MainClasses\Query;
+use Tusharkhan\FileDatabase\Core\Traits\Relations;
 
 abstract class Eloquent
 {
+    use Relations;
+
     protected $table;
 
-    protected $structure;
+    protected $with;
 
     protected $model;
 
@@ -32,7 +36,7 @@ abstract class Eloquent
 
     protected $incrementing = true;
 
-    protected $relations;
+    protected $relations = [];
 
     protected $fillable = ['*'];
 
@@ -48,6 +52,10 @@ abstract class Eloquent
 
     private $isMultiDimensional = false;
 
+    public function __construct()
+    {
+        $this->setTable($this->getTable());
+    }
 
     /**
      * @param string $name
@@ -66,22 +74,6 @@ abstract class Eloquent
     public function __get(string $name)
     {
         return $this->dataInsert[$name] ?? null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStructure()
-    {
-        return $this->structure;
-    }
-
-    /**
-     * @param mixed $structure
-     */
-    public function setStructure($structure): void
-    {
-        $this->structure = $structure;
     }
 
     /**
@@ -165,22 +157,6 @@ abstract class Eloquent
     public function setIncrementing(bool $incrementing): void
     {
         $this->incrementing = $incrementing;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
-     * @param mixed $relations
-     */
-    public function setRelations($relations): void
-    {
-        $this->relations = $relations;
     }
 
     /**
@@ -355,6 +331,16 @@ abstract class Eloquent
         $this->query[] = $query;
     }
 
+    public function getWith(): array
+    {
+        return $this->with;
+    }
+
+    public function setWith(array|string $with): void
+    {
+        $this->with = $with;
+    }
+
     /**
      * @return bool|mixed
      */
@@ -364,15 +350,8 @@ abstract class Eloquent
     }
 
     /**
-     * @return bool|mixed
-     */
-    public function getIncrementing()
-    {
-        return $this->incrementing;
-    }
-
-    /**
-     * @return Query
+     * @return array|Collection
+     * @throws MethodNotFoundException
      */
     public function get()
     {

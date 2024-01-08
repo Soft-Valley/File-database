@@ -12,6 +12,6 @@ class MethodNotFoundException extends \Exception
 {
     public function __construct($methodName, $className, $code = 0, \Throwable $previous = null)
     {
-        parent::__construct("Method $methodName not found in $className", $code, $previous);
+        parent::__construct("Method $methodName() not found in $className", $code, $previous);
     }
 }

@@ -8,6 +8,7 @@
 
 namespace TusharKhan\FileDatabase\Tests\Feature;
 
+use Illuminate\Support\Collection;
 use Tusharkhan\FileDatabase\Core\Exception\TableNotExistsException;
 use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
 use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
@@ -118,11 +119,23 @@ class FeatureTest extends TestCase
         ]));
     }
 
-    public function test_call_query_methods()
+    public function test_hasOne_method()
     {
-        $testModelQuery = TestModel::where('name', 'tushar 2')
-            ->where('name', 'tushar 3')
-            ->get();
-        dd($testModelQuery);
+        $testModelQuery = TestModel::with('page')->get();
+
+        $this->assertInstanceOf(Collection::class, $testModelQuery);
+
+        $page = $testModelQuery->first()['page'];
+
+        $this->assertIsArray($page);
+    }
+
+    public function test_hasMany_method()
+    {
+        $testModelQuery = TestModel::with('pages')->get();
+
+        $this->assertInstanceOf(Collection::class, $testModelQuery);
+
+        $this->assertInstanceOf(Collection::class, $testModelQuery->first()['pages']);
     }
 }
