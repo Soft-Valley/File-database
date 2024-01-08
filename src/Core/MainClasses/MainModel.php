@@ -10,12 +10,36 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use ArrayIterator;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
 
 class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 {
+
+    public static function __callStatic(string $name, array $arguments)
+    {
+        $instance = new static();
+
+        $instance->setRelationsAndQuery($instance, $name, $arguments);
+
+        return $instance;
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        $this->setRelationsAndQuery($this, $name, $arguments);
+
+        return $this;
+    }
+
+    private function setRelationsAndQuery(&$instance, string $name, array $arguments)
+    {
+        if ( $name != 'with' )
+            $instance->setQuery([$name, $arguments]);
+        else
+            $instance->setWith($arguments);
+    }
+
     public function getIterator()
     {
         return new ArrayIterator($this->data);
@@ -91,5 +115,32 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         }
 
         return $this->insertIntoTable();
+    }
+
+    // fetch all data from table
+    public static function all()
+    {
+        $instance = new static();
+        $tablePath = $instance->getTable();
+        $tableData = getTableData($tablePath);
+
+        $instance->setData(collect($tableData));
+
+        return $instance->data;
+    }
+
+    // fetch data from table by id
+    public static function find($id)
+    {
+        $instance = new static();
+        $tablePath = $instance->getTable();
+        $tableData = getTableData($tablePath);
+        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance) {
+            return $value[$instance->getPrimaryKey()] == $id;
+        });
+
+        $instance->setData(collect($data[0] ?? []));
+
+        return $instance->data;
     }
 }

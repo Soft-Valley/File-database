@@ -9,14 +9,20 @@
 namespace Tusharkhan\FileDatabase\Core\AbstractClasses;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Tusharkhan\FileDatabase\Core\Exception\MethodNotFoundException;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
+use Tusharkhan\FileDatabase\Core\MainClasses\Query;
+use Tusharkhan\FileDatabase\Core\Traits\Relations;
 
 abstract class Eloquent
 {
+    use Relations;
+
     protected $table;
 
-    protected $structure;
+    protected $with;
 
     protected $model;
 
@@ -30,11 +36,13 @@ abstract class Eloquent
 
     protected $incrementing = true;
 
-    protected $relations;
+    protected $relations = [];
 
     protected $fillable = ['*'];
 
     protected $append;
+
+    protected $query = [];
 
     protected $dataInsert = [];
 
@@ -44,6 +52,10 @@ abstract class Eloquent
 
     private $isMultiDimensional = false;
 
+    public function __construct()
+    {
+        $this->setTable($this->getTable());
+    }
 
     /**
      * @param string $name
@@ -67,22 +79,6 @@ abstract class Eloquent
     /**
      * @return mixed
      */
-    public function getStructure()
-    {
-        return $this->structure;
-    }
-
-    /**
-     * @param mixed $structure
-     */
-    public function setStructure($structure): void
-    {
-        $this->structure = $structure;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getModel()
     {
         return $this->model;
@@ -97,18 +93,18 @@ abstract class Eloquent
     }
 
     /**
-     * @return array
+     * @return array|Collection
      */
-    public function getData(): array
+    public function getData(): array|Collection
     {
         return $this->data;
     }
 
     /**
-     * @param array $data
+     * @param array|Collection $data
      * @return void
      */
-    public function setData(array $data): void
+    public function setData(array|Collection $data): void
     {
         $this->data = $data;
     }
@@ -161,22 +157,6 @@ abstract class Eloquent
     public function setIncrementing(bool $incrementing): void
     {
         $this->incrementing = $incrementing;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
-     * @param mixed $relations
-     */
-    public function setRelations($relations): void
-    {
-        $this->relations = $relations;
     }
 
     /**
@@ -324,5 +304,57 @@ abstract class Eloquent
     public function setIsMultiDimensional(bool $isMultiDimensional): void
     {
         $this->isMultiDimensional = $isMultiDimensional;
+    }
+
+    /**
+     * @param string $getTable
+     * @return void
+     */
+    public function setTable(string $getTable)
+    {
+        $this->table = $getTable;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * @param mixed $query
+     */
+    public function setQuery($query): void
+    {
+        $this->query[] = $query;
+    }
+
+    public function getWith(): array
+    {
+        return $this->with;
+    }
+
+    public function setWith(array|string $with): void
+    {
+        $this->with = $with;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getTimestamp()
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @return array|Collection
+     * @throws MethodNotFoundException
+     */
+    public function get()
+    {
+        return (new Query($this))->filterDataFromModel();
     }
 }
