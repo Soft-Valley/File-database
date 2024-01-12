@@ -131,8 +131,6 @@ class Query
     private function addRelationDataByKey(Collection $relationTableData,  $foreignKey, $localKey)
     {
         return $this->model->getData()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
-            //$item = collect($item);
-
             switch ($this->currentRelationName) {
                 case 'belongsTo':
                 case 'hasOne':
@@ -142,7 +140,7 @@ class Query
                     $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->values();
                     break;
                 case 'belongsToMany':
-                    $item->put($this->currentWithName, $relationTableData->whereIn($localKey, $item[$foreignKey])->values());
+                    $item[$this->currentWithName] = $relationTableData->whereIn($localKey, $item[$foreignKey])->values();
                     break;
             }
 

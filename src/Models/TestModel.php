@@ -25,4 +25,14 @@ class TestModel extends MainModel
     {
         return $this->hasMany(Pages::class, 'test_models_id', 'test_models_id');
     }
+
+    public function belongsToPage()
+    {
+        return $this->belongsTo(Pages::class, 'test_models_id', 'test_models_id');
+    }
+
+    public function belongsToManyPages()
+    {
+        return $this->belongsToMany(Pages::class, 'test_models_id', 'test_models_id');
+    }
 }

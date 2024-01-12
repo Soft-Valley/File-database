@@ -42,14 +42,13 @@ trait Relations
         return $relationData;
     }
 
-    public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null)
+    public function belongsTo($related, $foreignKey = null, $localKey = null)
     {
         $relationData = [
             'belongsTo' => [
                 'related' => $related,
                 'foreignKey' => $foreignKey,
-                'ownerKey' => $ownerKey,
-                'relation' => $relation
+                'localKey' => $localKey
             ]
         ];
 
@@ -58,15 +57,13 @@ trait Relations
         return $relationData;
     }
 
-    public function belongsToMany($related, $table = null, $foreignKey = null, $relatedKey = null, $relation = null)
+    public function belongsToMany($related, $foreignKey = null, $localKey = null)
     {
         $relationData = [
             'belongsToMany' => [
                 'related' => $related,
-                'table' => $table,
                 'foreignKey' => $foreignKey,
-                'relatedKey' => $relatedKey,
-                'relation' => $relation
+                'localKey' => $localKey
             ]
         ];
 
