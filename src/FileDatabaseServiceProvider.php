@@ -9,22 +9,21 @@
 namespace Tusharkhan\FileDatabase;
 
 use Illuminate\Support\ServiceProvider;
+use Tusharkhan\FileDatabase\Core\Helpers\ServiceProviderHelper;
 
 class FileDatabaseServiceProvider extends ServiceProvider
 {
+    use ServiceProviderHelper;
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/fileDatabase.php', 'fileDatabase');
+        $this->registerConfig();
     }
 
-    private function bootConfig()
+    public function boot()
     {
-        // check if config file exists
-        if (!file_exists(config_path('fileDatabase.php')) && $this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/fileDatabase.php' => config_path('fileDatabase.php'),
-            ], 'config');
-        }
+        $this->bootConfig();
+        $this->bootAboutCommand();
+        $this->bootCommands();
     }
 }

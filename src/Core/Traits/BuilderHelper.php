@@ -15,7 +15,7 @@ use Tusharkhan\FileDatabase\Core\MainClasses\File;
 
 trait BuilderHelper
 {
-    public function primary($name)
+    public function primary($name = 'id')
     {
         $this->primaryKey = $name;
         return $this;

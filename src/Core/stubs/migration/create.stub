@@ -1,0 +1,28 @@
+<?php
+namespace {{Namespace}};
+
+use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
+use Tusharkhan\FileDatabase\Core\MainClasses\Migration;
+use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
+
+class {{ClassName}} extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function run()
+    {
+        Schema::process('{{table_name}}', function (Builder $table) {
+            // for autoincrement unique key
+            $table->primary();
+
+            // your columns here ...
+
+            $table->timeStamp('created_at');
+            $table->timeStamp('updated_at');
+        })->run();
+    }
+}
