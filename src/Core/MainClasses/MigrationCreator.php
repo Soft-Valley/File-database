@@ -8,6 +8,7 @@
 
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
+use Illuminate\Support\Str;
 use Tusharkhan\FileDatabase\Core\Exception\TableExistsException;
 
 class MigrationCreator
@@ -22,7 +23,7 @@ class MigrationCreator
      */
     public function __construct($name, $options)
     {
-        $this->name = $name;
+        $this->name = Str::snake($name);
         $this->options = $options;
     }
 
@@ -55,22 +56,40 @@ class MigrationCreator
         return $this->createFile($stub);
     }
 
+    /**
+     * @throws TableExistsException
+     */
     private function update()
     {
-        $migration = new Migration($this->name);
-        $migration->update();
+        // get stub data
+        $stub = $this->getStub('update');
+        $this->table = $this->options['update'];
+
+        // replace stub data
+        $stub = str_replace('{{table_name}}', $this->options['update'], $stub);
+        $stub = str_replace('{{ClassName}}', $this->name, $stub);
+        $stub = str_replace('{{Namespace}}', $this->createNameSpace(), $stub);
+
+        // create migration file
+        return $this->createFile($stub);
     }
 
-    private function createTable()
-    {
-        $migration = new Migration($this->name);
-        $migration->create();
-    }
-
+    /**
+     * @throws TableExistsException
+     */
     private function dropTable()
     {
-        $migration = new Migration($this->name);
-        $migration->drop();
+        // get stub data
+        $stub = $this->getStub('drop');
+        $this->table = $this->options['drop'];
+
+        // replace stub data
+        $stub = str_replace('{{table_name}}', $this->options['drop'], $stub);
+        $stub = str_replace('{{ClassName}}', $this->name, $stub);
+        $stub = str_replace('{{Namespace}}', $this->createNameSpace(), $stub);
+
+        // create migration file
+        return $this->createFile($stub);
     }
 
     private function getStub(string $string)

@@ -22,7 +22,6 @@ class MigrationCommand extends Command
 
     public function handle()
     {
-        // TODO: Implement update and delete.
         $name = $this->argument('name');
 
         $migration = new MigrationCreator($name, $this->options());
