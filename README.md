@@ -1,5 +1,5 @@
 <center>
-    <img src="OIG.jpg" width="924" height="600">
+    <img src="img2.jpg" width="924" height="600">
 </center>
 
 # File Database
