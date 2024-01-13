@@ -13,9 +13,9 @@ class {{ClassName}} extends Migration
      * @return void
      * @throws \Exception
      */
-    public function run()
+    public function up()
     {
-        Schema::process('test_models', function (Builder $table) {
+        Schema::process('{{table_name}}', function (Builder $table) {
             // your columns here ...
         })->update();
     }

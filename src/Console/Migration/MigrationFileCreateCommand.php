@@ -11,7 +11,7 @@ namespace Tusharkhan\FileDatabase\Console\Migration;
 use Illuminate\Console\Command;
 use Tusharkhan\FileDatabase\Core\MainClasses\MigrationCreator;
 
-class MigrationCommand extends Command
+class MigrationFileCreateCommand extends Command
 {
     protected $signature = 'fdb:migration {name : The name of the migration}
         {--update= : Updated table }

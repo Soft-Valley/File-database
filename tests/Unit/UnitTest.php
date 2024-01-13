@@ -117,6 +117,6 @@ class UnitTest extends TestCase
 
 //        $insertData = $insertData->where('name', 'tushar 2')->where('name', 'tushar 3');
 
-        dd(getTableData('pages'));
+        dd(migrationDirectory());
     }
 }

@@ -9,7 +9,8 @@
 namespace Tusharkhan\FileDatabase\Core\Helpers;
 
 use Illuminate\Foundation\Console\AboutCommand;
-use Tusharkhan\FileDatabase\Console\Migration\MigrationCommand;
+use Tusharkhan\FileDatabase\Console\Migration\MigrateCommand;
+use Tusharkhan\FileDatabase\Console\Migration\MigrationFileCreateCommand;
 
 trait ServiceProviderHelper
 {
@@ -44,7 +45,8 @@ trait ServiceProviderHelper
         // Register the command if we are using the application via the CLI
         if ($this->app->runningInConsole()) {
             $this->commands([
-                MigrationCommand::class,
+                MigrationFileCreateCommand::class,
+                MigrateCommand::class
             ]);
         }
     }

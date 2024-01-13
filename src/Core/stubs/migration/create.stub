@@ -13,7 +13,7 @@ class {{ClassName}} extends Migration
      * @return void
      * @throws \Exception
      */
-    public function run()
+    public function up()
     {
         Schema::process('{{table_name}}', function (Builder $table) {
             // for autoincrement unique key

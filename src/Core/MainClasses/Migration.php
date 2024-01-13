@@ -15,7 +15,7 @@ class Migration
      *
      * @return void
      */
-    public function run()
+    public function up()
     {
 
     }

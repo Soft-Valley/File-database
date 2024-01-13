@@ -17,13 +17,9 @@ class MigrationCreator
     private $options;
     private $table;
 
-    /**
-     * @param array|bool|string|null $name
-     * @param array|bool|string|null $options
-     */
     public function __construct($name, $options)
     {
-        $this->name = Str::snake($name);
+        $this->name = Str::studly($name);
         $this->options = $options;
     }
 
@@ -36,70 +32,28 @@ class MigrationCreator
         } elseif ( $this->options['drop'] ){
             return $this->dropTable();
         }
+
+        return false;
     }
 
-    /**
-     * @throws TableExistsException
-     */
     public function create()
     {
-        // get stub data
-        $stub = $this->getStub('create');
-        $this->table = $this->options['create'];
-
-        // replace stub data
-        $stub = str_replace('{{table_name}}', $this->options['create'], $stub);
-        $stub = str_replace('{{ClassName}}', $this->name, $stub);
-        $stub = str_replace('{{Namespace}}', $this->createNameSpace(), $stub);
-
-        // create migration file
-        return $this->createFile($stub);
+        return $this->processStub('create');
     }
 
-    /**
-     * @throws TableExistsException
-     */
     private function update()
     {
-        // get stub data
-        $stub = $this->getStub('update');
-        $this->table = $this->options['update'];
-
-        // replace stub data
-        $stub = str_replace('{{table_name}}', $this->options['update'], $stub);
-        $stub = str_replace('{{ClassName}}', $this->name, $stub);
-        $stub = str_replace('{{Namespace}}', $this->createNameSpace(), $stub);
-
-        // create migration file
-        return $this->createFile($stub);
+        return $this->processStub('update');
     }
 
-    /**
-     * @throws TableExistsException
-     */
     private function dropTable()
     {
-        // get stub data
-        $stub = $this->getStub('drop');
-        $this->table = $this->options['drop'];
-
-        // replace stub data
-        $stub = str_replace('{{table_name}}', $this->options['drop'], $stub);
-        $stub = str_replace('{{ClassName}}', $this->name, $stub);
-        $stub = str_replace('{{Namespace}}', $this->createNameSpace(), $stub);
-
-        // create migration file
-        return $this->createFile($stub);
+        return $this->processStub('drop');
     }
 
     private function getStub(string $string)
     {
         return file_get_contents(__DIR__ . "/../Stubs/migration/{$string}.stub");
-    }
-
-    private function createNameSpace()
-    {
-        return 'App\\'.config('fileDatabase.root_directory').'\\'.config('fileDatabase.database_file_directory') . '\\'. config('fileDatabase.migrations_directory');
     }
 
     private function createFile(array|bool|string $stub)
@@ -122,11 +76,26 @@ class MigrationCreator
 
     private function getPath(bool|array|string|null $name)
     {
-        return $this->migrationDirectory() . '/' . date('Y_m_d_His') . '_' . $name . '.php';
+        return $this->migrationDirectory() . '/' . date('Y_m_d_His') . '_' . Str::snake($name) . '.php';
     }
 
     private function migrationDirectory()
     {
-        return config('fileDatabase.root_directory') . '/' . config('fileDatabase.database_file_directory') . '/' . config('fileDatabase.migrations_directory');
+        return migrationDirectory();
+    }
+
+    private function processStub($option)
+    {
+        // get stub data
+        $stub = $this->getStub($option);
+        $this->table = $this->options[$option];
+
+        // replace stub data
+        $stub = str_replace('{{table_name}}', $this->options[$option], $stub);
+        $stub = str_replace('{{ClassName}}', $this->name, $stub);
+        $stub = str_replace('{{Namespace}}', migrationNameSpace(), $stub);
+
+        // create migration file
+        return $this->createFile($stub);
     }
 }

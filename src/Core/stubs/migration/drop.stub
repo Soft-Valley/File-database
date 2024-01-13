@@ -13,8 +13,8 @@ class {{ClassName}} extends Migration
      * @return void
      * @throws \Exception
      */
-    public function run()
+    public function up()
     {
-        Schema::drop('test_models');
+        Schema::drop('{{table_name}}');
     }
 }
