@@ -4,6 +4,7 @@
     "license": "MIT",
     "description": "A simple file based database for PHP",
     "keywords" : ["database", "file", "php", "tusharkhan", "file-database"],
+    "homepage": "https://github.com/Soft-Valley/File-database",
     "autoload": {
         "psr-4": {
             "Tusharkhan\\FileDatabase\\": "src/"
@@ -21,11 +22,13 @@
         },
         "classmap": [
             "tests"
+        ],
+        "files": [
+            "src/Core/Helpers/functions.php"
         ]
     },
     "require": {
-        "php": ">=8.0",
-        "illuminate/support": "^10.38"
+        "php": ">=8.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.18",

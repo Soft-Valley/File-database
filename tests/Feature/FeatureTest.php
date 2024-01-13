@@ -8,9 +8,7 @@
 
 namespace TusharKhan\FileDatabase\Tests\Feature;
 
-use TusharKhan\FileDatabase\Tests\TestCase;
-
-class FeatureTest extends TestCase
+class FeatureTest extends \TusharKhan\FileDatabase\Tests\TestCase
 {
 
 }
