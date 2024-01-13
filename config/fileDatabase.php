@@ -7,6 +7,12 @@
 
 
 return [
+    'root_directory' => 'FileDatabase',
     'database_directory' => 'fileDatabase',
     'tables_directory' => 'tables',
+    'models_directory' => 'Models',
+    'migrations_directory' => 'Migrations',
+    'seeds_directory' => 'Seeds',
+    'factories_directory' => 'Factories',
+    'database_file_directory' => 'Database',
 ];

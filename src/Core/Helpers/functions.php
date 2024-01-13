@@ -33,6 +33,13 @@ if( ! function_exists('arrayDepth')) {
     }
 }
 
+if ( ! function_exists('tableDirectory') ){
+    function tableDirectory()
+    {
+        return storage_path(Config::get('fileDatabase.database_directory', 'fileDatabase') . '/' . Config::get('fileDatabase.tables_directory', 'tables'));
+    }
+}
+
 if( ! function_exists('getTablePath')) {
     function getTablePath($table, $suffix = '')
     {
@@ -73,5 +80,31 @@ if( ! function_exists('sortMultidimensionalArray') ) {
         $sortKeys = array_column($array, $key);
 
         array_multisort($sortKeys, $sortType, $array);
+    }
+}
+
+if ( ! function_exists('migrationNameSpace') ){
+    function migrationNameSpace()
+    {
+        return 'App\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.root_directory')).
+            '\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.database_file_directory')) .
+            '\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.migrations_directory'));
+    }
+}
+
+if ( ! function_exists('migrationDirectory') ){
+    function migrationDirectory()
+    {
+        return app_path(str_replace("\\", "/", str_replace("App\\", "", migrationNameSpace())));
+    }
+}
+
+if ( ! function_exists('migrationFileDatePattern') ){
+    function migrationFileDatePattern()
+    {
+        return '/\d{4}_\d{2}_\d{2}_\d{6}_/';
     }
 }

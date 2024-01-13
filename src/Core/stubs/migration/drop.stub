@@ -1,0 +1,20 @@
+<?php
+namespace {{Namespace}};
+
+use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
+use Tusharkhan\FileDatabase\Core\MainClasses\Migration;
+use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
+
+class {{ClassName}} extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function up()
+    {
+        Schema::drop('{{table_name}}');
+    }
+}
