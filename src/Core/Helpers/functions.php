@@ -115,3 +115,20 @@ if ( ! function_exists('classInstance') ){
         return new $classWithNamespace;
     }
 }
+
+if ( ! function_exists('modelNamespace') ){
+    function modelNamespace()
+    {
+        return 'App\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.root_directory')).
+            '\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.models_directory'));
+    }
+}
+
+if ( ! function_exists('modelDirectory') ){
+    function modelDirectory()
+    {
+        return app_path(str_replace("\\", "/", str_replace("App\\", "", modelNamespace())));
+    }
+}

@@ -1,6 +1,6 @@
 <?php
 
-use Tusharkhan\FileDatabase\Models\TestModel;
+namespace TusharKhan\FileDatabase\Tests\Feature;
 
 /**
  * created by: tushar Khan

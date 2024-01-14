@@ -11,6 +11,7 @@ namespace Tusharkhan\FileDatabase\Core\Helpers;
 use Illuminate\Foundation\Console\AboutCommand;
 use Tusharkhan\FileDatabase\Console\Migration\MigrateCommand;
 use Tusharkhan\FileDatabase\Console\Migration\MigrationFileCreateCommand;
+use Tusharkhan\FileDatabase\Console\Model\CreateModel;
 
 trait ServiceProviderHelper
 {
@@ -46,7 +47,8 @@ trait ServiceProviderHelper
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MigrationFileCreateCommand::class,
-                MigrateCommand::class
+                MigrateCommand::class,
+                CreateModel::class
             ]);
         }
     }

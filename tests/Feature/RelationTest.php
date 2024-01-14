@@ -1,7 +1,5 @@
 <?php
-
-use Illuminate\Support\Collection;
-use Tusharkhan\FileDatabase\Models\TestModel;
+namespace TusharKhan\FileDatabase\Tests\Feature;
 
 /**
  * created by: tushar Khan
@@ -9,6 +7,7 @@ use Tusharkhan\FileDatabase\Models\TestModel;
  * date : 1/13/2024
  */
 
+use Illuminate\Support\Collection;
 
 class RelationTest extends \TusharKhan\FileDatabase\Tests\TestCase
 {
