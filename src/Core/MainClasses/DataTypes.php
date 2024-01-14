@@ -19,7 +19,7 @@ final class DataTypes
 
     const TEXT         = 'text';
 
-    const INT          = 'integer';
+    const INT          = 'int';
 
     const TINYINT      = 'tinyint';
 
@@ -52,33 +52,6 @@ final class DataTypes
     const TIME         = 'time';
 
     const ENUM         = 'enum';
-
-    /**
-     * @var array
-     */
-    private static $types = [
-        'string'       => self::STRING,
-        'integer'      => self::INT,
-        'boolean'      => self::BOOLEAN,
-        'float'        => self::FLOAT,
-        'double'       => self::DOUBLE,
-        'array'        => self::ARRAY,
-        'NULL'         => self::NULL,
-        'tinyint'      => self::TINYINT,
-        'smallint'     => self::SMALLINT,
-        'mediumint'    => self::MEDIUMINT,
-        'bigint'       => self::BIGINT,
-        'char'         => self::CHAR,
-        'varchar'      => self::VARCHAR,
-        'text'         => self::TEXT,
-        'binary'       => self::BINARY,
-        'date'         => self::DATE,
-        'datetime'     => self::DATETIME,
-        'timestamp'    => self::TIMESTAMP,
-        'time'         => self::TIME,
-        'enum'         => self::ENUM,
-        'unknown_type' => self::UNKNOWN_TYPE,
-    ];
 
     /**
      * @param mixed $value
