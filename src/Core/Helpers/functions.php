@@ -108,3 +108,10 @@ if ( ! function_exists('migrationFileDatePattern') ){
         return '/\d{4}_\d{2}_\d{2}_\d{6}_/';
     }
 }
+
+if ( ! function_exists('classInstance') ){
+    function classInstance($classWithNamespace)
+    {
+        return new $classWithNamespace;
+    }
+}

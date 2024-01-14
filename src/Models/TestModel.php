@@ -18,7 +18,7 @@ class TestModel extends MainModel
 
     public function page()
     {
-        return $this->hasOne(Pages::class, 'test_models_id', 'test_models_id');
+        return $this->hasOne(Pages::class);
     }
 
     public function pages()
