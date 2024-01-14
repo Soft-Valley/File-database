@@ -15,4 +15,4 @@ yarn-error.log
 /.vscode
 /FileDatabase
 /FileDatabase/*
-src/Models
+src/Models/*
