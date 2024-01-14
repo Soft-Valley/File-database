@@ -18,8 +18,8 @@ trait Relations
         $relationData = [
             'hasOne' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
-                'localKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
+                'localKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
+                'foreignKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
             ]
         ];
         $this->setRelations($relationData);
@@ -32,8 +32,8 @@ trait Relations
         $relationData = [
             'hasMany' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
-                'localKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
+                'foreignKey' => $localKey ?? $this->getRelatedPrimaryKey($related),
+                'localKey' => $foreignKey ?? $this->getRelatedForeignKey($related)
             ]
         ];
 

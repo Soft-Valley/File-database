@@ -18,7 +18,8 @@
     ],
     "autoload-dev": {
         "psr-4": {
-            "TusharKhan\\FileDatabase\\Tests\\": "tests"
+            "TusharKhan\\FileDatabase\\Tests\\": "tests",
+            "App\\FileDatabase\\Models\\": "vendor/orchestra/testbench-core/laravel/app/FileDatabase/Models"
         },
         "classmap": [
             "tests"

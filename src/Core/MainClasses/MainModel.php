@@ -47,7 +47,7 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
     public function create($data)
     {
-        $this->setDataInsert($data);
+        $this->dataInsert = $data;
         return $this->save();
     }
 

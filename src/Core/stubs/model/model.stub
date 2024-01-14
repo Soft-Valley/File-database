@@ -1,0 +1,10 @@
+<?php
+
+namespace {{namespace}};
+
+use Tusharkhan\FileDatabase\Core\MainClasses\MainModel;
+
+class {{model}} extends MainModel
+{
+
+}
