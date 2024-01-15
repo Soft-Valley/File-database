@@ -9,6 +9,7 @@ namespace TusharKhan\FileDatabase\Tests\Feature;
 
 use App\FileDatabase\Models\Email;
 use App\FileDatabase\Models\User;
+use Illuminate\Support\Collection;
 
 class EloquentTest extends \TusharKhan\FileDatabase\Tests\TestCase
 {
@@ -44,8 +45,17 @@ class EloquentTest extends \TusharKhan\FileDatabase\Tests\TestCase
         $email = new Email();
 
         $this->assertIsArray($email->create([
-            'user_id' => 1,
-            'email' => 'test2@email.com'
+            'created_at' => '2023-01-13 12:12:12',
+            'updated_at' => '2023-01-13 12:12:12'
         ]));
+    }
+
+    public function test_find_email_data()
+    {
+        $email = new Email();
+
+        $this->assertInstanceOf(Collection::class, $email->find(3));
+
+        $this->assertCount(3, $email->find(3));
     }
 }
