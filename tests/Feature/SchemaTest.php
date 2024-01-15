@@ -1,7 +1,6 @@
 <?php
 
-use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
-use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
+namespace TusharKhan\FileDatabase\Tests\Feature;
 
 /**
  * created by: tushar Khan
@@ -9,6 +8,8 @@ use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
  * date : 1/13/2024
  */
 
+use Tusharkhan\FileDatabase\Core\MainClasses\Builder;
+use Tusharkhan\FileDatabase\Core\MainClasses\Schema;
 
 class SchemaTest extends \TusharKhan\FileDatabase\Tests\TestCase
 {

@@ -108,3 +108,27 @@ if ( ! function_exists('migrationFileDatePattern') ){
         return '/\d{4}_\d{2}_\d{2}_\d{6}_/';
     }
 }
+
+if ( ! function_exists('classInstance') ){
+    function classInstance($classWithNamespace)
+    {
+        return new $classWithNamespace;
+    }
+}
+
+if ( ! function_exists('modelNamespace') ){
+    function modelNamespace()
+    {
+        return 'App\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.root_directory')).
+            '\\'.
+            \Illuminate\Support\Str::studly(config('fileDatabase.models_directory'));
+    }
+}
+
+if ( ! function_exists('modelDirectory') ){
+    function modelDirectory()
+    {
+        return app_path(str_replace("\\", "/", str_replace("App\\", "", modelNamespace())));
+    }
+}

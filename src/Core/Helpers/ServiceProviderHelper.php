@@ -11,13 +11,10 @@ namespace Tusharkhan\FileDatabase\Core\Helpers;
 use Illuminate\Foundation\Console\AboutCommand;
 use Tusharkhan\FileDatabase\Console\Migration\MigrateCommand;
 use Tusharkhan\FileDatabase\Console\Migration\MigrationFileCreateCommand;
+use Tusharkhan\FileDatabase\Console\Model\CreateModel;
 
 trait ServiceProviderHelper
 {
-    private function registerConfig()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../../config/fileDatabase.php', 'fileDatabase');
-    }
 
     private function bootAboutCommand()
     {
@@ -30,24 +27,20 @@ trait ServiceProviderHelper
         ]);
     }
 
-    private function bootConfig()
-    {
-        // check if config file exists
-        if (!file_exists(config_path('fileDatabase.php')) && $this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/fileDatabase.php' => config_path('fileDatabase.php'),
-            ], 'config');
-        }
-    }
-
     private function bootCommands()
     {
         // Register the command if we are using the application via the CLI
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MigrationFileCreateCommand::class,
-                MigrateCommand::class
+                MigrateCommand::class,
+                CreateModel::class
             ]);
         }
+    }
+
+    private function bootHelper()
+    {
+         require_once __DIR__ . '/functions.php';
     }
 }

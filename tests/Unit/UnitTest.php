@@ -10,6 +10,7 @@ namespace TusharKhan\FileDatabase\Tests\Unit;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Tusharkhan\FileDatabase\Core\MainClasses\DataTypes;
 use Tusharkhan\FileDatabase\Core\MainClasses\File;
 use Tusharkhan\FileDatabase\Models\TestModel;
 use TusharKhan\FileDatabase\Tests\TestCase;
@@ -77,46 +78,103 @@ class UnitTest extends TestCase
 
     public function test_anything()
     {
-        $insertData = [
+        $arr = [
             [
-                'belongsToMany' => [
-                    'related' => 'related',
-                    'table' => '$table',
-                    'foreignKey' => '$foreignKey',
-                    'relatedKey' => '$relatedKey',
-                    'relation' => '$relation'
-                ]
+                "name" => "tus",
+                "age" => 12,
+                "id" => 1
             ],
-//            [
-//                "char" => "t",
-//                "varchar" => "tushar",
-//                "name" => "tushar 3",
-//                "text" => "tushar",
-//            ],
-//            [
-//                "char" => "t",
-//                "varchar" => "tushar",
-//                "name" => "tushar 2",
-//                "text" => "tushar",
-//            ]
+            [
+                "name" => "tus 2",
+                "age" => 12,
+                "id" => 2
+            ],
+            [
+                "name" => "tus 3",
+                "age" => 12,
+                "id" => 3
+            ],
+            [
+                "name" => "tus 4",
+                "age" => 12,
+                "id" => 4
+            ],
+            [
+                "name" => "tus 5",
+                "age" => 12,
+                "id" => 5
+            ],
+            [
+                "name" => "tus 6",
+                "age" => 12,
+                "id" => 6
+            ],
+            [
+                "name" => "tus 7",
+                "age" => 12,
+                "id" => 7
+            ],
+            [
+                "name" => "tus 8",
+                "age" => 12,
+                "id" => 8
+            ],
+            [
+                "name" => "tus 9",
+                "age" => 12,
+                "id" => 9
+            ],
+            [
+                "name" => "tus 10",
+                "age" => 12,
+                "id" => 10
+            ],
+            [
+                "name" => "tus 11",
+                "age" => 12,
+                "id" => 11
+            ],
+            [
+                "name" => "tus 12",
+                "age" => 12,
+                "id" => 12
+            ],
+            [
+                "name" => "tus 13",
+                "age" => 12,
+                "id" => 13
+            ],
+            [
+                "name" => "tus 14",
+                "age" => 12,
+                "id" => 14
+            ],
+            [
+                "name" => "tus 15",
+                "age" => 12,
+                "id" => 15
+            ],
+            [
+                "name" => "tus 16",
+                "age" => 12,
+                "id" => 16
+            ],
+            [
+                "name" => "tus 17",
+                "age" => 12,
+                "id" => 17
+            ],
+            [
+                "name" => "tus 18",
+                "age" => 12,
+                "id" => 18
+            ]
         ];
 
-//        $insertData = [
-//            "char" => "t",
-//            "varchar" => "tushar",
-//            "name" => "tushar",
-//            "text" => "tushar",
-//        ];
+        $data = Arr::where($arr, function ($value, $key) {
+            return $value['id'] == 10;
+        });
 
-        $insertData = Collection::wrap([
-            [
-                "char" , "t",
-                "varchar" , "tushar"
-            ]
-        ]);
-
-//        $insertData = $insertData->where('name', 'tushar 2')->where('name', 'tushar 3');
-
-        dd(migrationDirectory());
+        dd(array_values($data));
     }
 }

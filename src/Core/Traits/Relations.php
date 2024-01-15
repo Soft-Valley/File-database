@@ -18,8 +18,8 @@ trait Relations
         $relationData = [
             'hasOne' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey,
-                'localKey' => $localKey
+                'localKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
+                'foreignKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
             ]
         ];
         $this->setRelations($relationData);
@@ -32,8 +32,8 @@ trait Relations
         $relationData = [
             'hasMany' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey,
-                'localKey' => $localKey
+                'foreignKey' => $localKey ?? $this->getRelatedPrimaryKey($related),
+                'localKey' => $foreignKey ?? $this->getRelatedForeignKey($related)
             ]
         ];
 
@@ -47,8 +47,8 @@ trait Relations
         $relationData = [
             'belongsTo' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey,
-                'localKey' => $localKey
+                'foreignKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
+                'localKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
             ]
         ];
 
@@ -62,8 +62,8 @@ trait Relations
         $relationData = [
             'belongsToMany' => [
                 'related' => $related,
-                'foreignKey' => $foreignKey,
-                'localKey' => $localKey
+                'foreignKey' => $foreignKey ?? $this->getRelatedForeignKey($related),
+                'localKey' => $localKey ?? $this->getRelatedPrimaryKey($related)
             ]
         ];
 
@@ -80,5 +80,25 @@ trait Relations
     public function getRelations()
     {
         return $this->relations;
+    }
+
+    private function classInstance($classNamespace)
+    {
+        return classInstance($classNamespace);
+    }
+
+    private function getRelatedPrimaryKey($classNamespace)
+    {
+        return $this->classInstance($classNamespace)->getPrimaryKey();
+    }
+
+    private function getRelatedTable($classNamespace)
+    {
+        return $this->classInstance($classNamespace)->getTable();
+    }
+
+    private function getRelatedForeignKey($classNamespace)
+    {
+        return $this->getRelatedTable($classNamespace). '_id';
     }
 }

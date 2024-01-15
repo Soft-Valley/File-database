@@ -47,7 +47,7 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
     public function create($data)
     {
-        $this->setDataInsert($data);
+        $this->dataInsert = $data;
         return $this->save();
     }
 
@@ -135,11 +135,19 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         $instance = new static();
         $tablePath = $instance->getTable();
         $tableData = getTableData($tablePath);
-        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance) {
-            return $value[$instance->getPrimaryKey()] == $id;
+        $selectedKey = null;
+
+        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance, &$selectedKey) {
+            if ( $value[$instance->getPrimaryKey()] == (int)$id ){
+                $selectedKey = $key;
+                return $value;
+            }
+            return [];
         });
 
-        $instance->setData(collect($data[0] ?? []));
+        $result = ($selectedKey) ? $data[$selectedKey] : [];
+
+        $instance->setData(collect($result));
 
         return $instance->data;
     }
