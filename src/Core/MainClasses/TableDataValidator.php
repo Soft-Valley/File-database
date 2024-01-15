@@ -10,15 +10,17 @@ namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Config;
 use Tusharkhan\FileDatabase\Core\Exception\SchemaNotFoundException;
 use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
+
 
 class TableDataValidator
 {
 
     public static function validate(Eloquent $model, $data)
     {
-        $schemaData = getTableData($model->getTable(), '_schema');
+        $schemaData = self::getTableData($model->getTable(), '_schema');
 
         if( ! $schemaData ){
             throw new SchemaNotFoundException($model->getTable() . '_schema');
@@ -42,6 +44,23 @@ class TableDataValidator
         if( $errors ) return $errors;
 
         self::processDataToInsertTable($model);
+    }
+
+    private static function getTableData($table, $suffix = '')
+    {
+        $tablePath = self::getTablePath($table, $suffix);
+        if (File::exists($tablePath)) {
+            return json_decode(File::get($tablePath), true);
+        }
+
+        return [];
+    }
+
+    private static function getTablePath($table, $suffix = '')
+    {
+        $directoryPath = Config::get('fileDatabase.database_directory', 'fileDatabase');
+        $tablesPath = Config::get('fileDatabase.tables_directory', 'tables');
+        return storage_path($directoryPath . '/' . $tablesPath . '/' . $table . $suffix . '.json');
     }
 
     private static function checkErrors($data, $schemaDataColumns, &$errors)

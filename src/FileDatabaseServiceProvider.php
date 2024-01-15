@@ -17,13 +17,19 @@ class FileDatabaseServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->registerConfig();
+        $this->mergeConfigFrom(__DIR__ . '/../config/fileDatabase.php', 'fileDatabase');
     }
 
     public function boot()
     {
-        $this->bootConfig();
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/fileDatabase.php' => config_path('fileDatabase.php'),
+            ], 'fdb-config');
+        }
+
         $this->bootAboutCommand();
         $this->bootCommands();
+        $this->bootHelper();
     }
 }

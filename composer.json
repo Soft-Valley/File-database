@@ -8,7 +8,10 @@
     "autoload": {
         "psr-4": {
             "Tusharkhan\\FileDatabase\\": "src/"
-        }
+        },
+        "files": [
+            "src/Core/Helpers/functions.php"
+        ]
     },
     "authors": [
         {
@@ -23,16 +26,26 @@
         },
         "classmap": [
             "tests"
-        ],
-        "files": [
-            "src/Core/Helpers/functions.php"
         ]
     },
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "illuminate/support": "^10.40.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.18",
         "phpunit/phpunit": "^10.5"
-    }
+    },
+    "extra": [
+        {
+            "laravel": {
+                "providers": [
+                    "Tusharkhan\\FileDatabase\\FileDatabaseServiceProvider"
+                ],
+                "aliases": {
+                    "FileDatabase": "Tusharkhan\\FileDatabase\\Facade\\FileDatabase"
+                }
+            }
+        }
+    ]
 }

@@ -22,7 +22,7 @@ abstract class Eloquent
 
     protected $table;
 
-    protected $with;
+    protected $with = [];
 
     protected $model;
 
