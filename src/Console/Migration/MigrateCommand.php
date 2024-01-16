@@ -23,9 +23,9 @@ class MigrateCommand extends Command
     {
         if ($this->option('fresh')) {
             if ( File::deleteDirectory(tableDirectory()) ){
-                $this->info('Database Json | Remove all database json success!');
+                $this->info('File Database | Remove all database json success!');
             } else {
-                $this->error('Database Json | Remove all database json failed!');
+                $this->error('File Database | Remove all database json failed!');
             }
         }
 
@@ -44,7 +44,7 @@ class MigrateCommand extends Command
         }
 
         if ($count == 0) {
-            $this->info('Database Json | Nothing to migrate');
+            $this->info('File Database | Nothing to migrate');
         }
     }
 
