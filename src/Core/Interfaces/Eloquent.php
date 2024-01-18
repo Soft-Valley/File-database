@@ -10,11 +10,11 @@ namespace Tusharkhan\FileDatabase\Core\Interfaces;
 
 interface Eloquent
 {
-    public function create($data);
+    public static function create($data);
 
-    public function delete($id);
+    public static function delete($id);
 
-    public function update($id, $data);
+    public static function update($id, $data);
 
     public function save();
 }

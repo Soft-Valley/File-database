@@ -93,7 +93,10 @@ class MigrateCommand extends Command
 
     private function checkIfMigrated(string $class, string $file)
     {
-        $path = tableDirectory() . '/migrations.json';
+        $tableDirectory = tableDirectory();
+        $path = $tableDirectory . '/migrations.json';
+
+        if ( ! File::exists(tableDirectory()) ) File::createDirectory(tableDirectory());
 
         if ( ! File::exists($path) ){
             File::createFile($path);

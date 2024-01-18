@@ -45,10 +45,11 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         return new ArrayIterator($this->data);
     }
 
-    public function create($data)
+    public static function create($data)
     {
-        $this->dataInsert = $data;
-        return $this->save();
+        $instance = new static();
+        $instance->dataInsert = $data;
+        return $instance->save();
     }
 
     public function validateData($data = null)
@@ -56,33 +57,34 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         return TableDataValidator::validate($this, $data ?? $this->getDataInsert());
     }
 
-    public function delete($id)
+    public static function delete($id)
     {
-        $tablePath = $this->getTable();
+        $instance = new static();
+        $tablePath = $instance->getTable();
         $tableData = getTableData($tablePath);
 
-        $data = Arr::where($tableData, function ($value, $key) use ($id) {
-            return $value[$this->getPrimaryKey()] != $id;
+        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance) {
+            return $value[$instance->getPrimaryKey()] != $id;
         });
 
-        $this->setData(array_values($data));
+        $instance->setData(array_values($data));
 
-        return count($this->insertIntoTable()) > 0;
+        return count($instance->insertIntoTable()) > 0;
     }
 
-    public function update($id, $data)
+    public static function update($id, $data)
     {
-        if ( ! isset($data['updated_at']) )
-        {
+        $instance = new static();
+        if ( ! isset($data['updated_at']) ) {
             $data['updated_at'] = date('Y-m-d H:i:s');
         }
 
-        $tablePath = $this->getTable();
+        $tablePath = $instance->getTable();
         $tableData = getTableData($tablePath);
         $selectedKey = null;
 
-        $searchData = Arr::where($tableData, function ($value, $key) use ($id, &$selectedKey) {
-            if ($value[$this->getPrimaryKey()] == $id) {
+        $searchData = Arr::where($tableData, function ($value, $key) use ($id, &$selectedKey, $instance) {
+            if ($value[$instance->getPrimaryKey()] == $id) {
                 $selectedKey = $key;
                 return $value;
             }
@@ -98,9 +100,9 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
             $tableData[$selectedKey] = $arr;
 
-            $this->setData($tableData);
+            $instance->setData($tableData);
 
-            return count($this->insertIntoTable()) > 0;
+            return count($instance->insertIntoTable()) > 0;
         }
 
         return false;
