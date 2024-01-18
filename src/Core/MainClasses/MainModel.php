@@ -116,39 +116,4 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
 
         return $this->insertIntoTable();
     }
-
-    // fetch all data from table
-    public static function all()
-    {
-        $instance = new static();
-        $tablePath = $instance->getTable();
-        $tableData = getTableData($tablePath);
-
-        $instance->setData(collect($tableData));
-
-        return $instance->data;
-    }
-
-    // fetch data from table by id
-    public static function find($id)
-    {
-        $instance = new static();
-        $tablePath = $instance->getTable();
-        $tableData = getTableData($tablePath);
-        $selectedKey = null;
-
-        $data = Arr::where($tableData, function ($value, $key) use ($id, $instance, &$selectedKey) {
-            if ( $value[$instance->getPrimaryKey()] == (int)$id ){
-                $selectedKey = $key;
-                return $value;
-            }
-            return [];
-        });
-
-        $result = ($selectedKey) ? $data[$selectedKey] : [];
-
-        $instance->setData(collect($result));
-
-        return $instance->data;
-    }
 }
