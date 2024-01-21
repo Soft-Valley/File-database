@@ -12,3 +12,22 @@ You can store data as json or as a string. You can also store data in a file or 
 ```bash
 composer require tusharkhan/file-database
 ```
+
+## Usage
+For this package all the Models, Database has different folders. If you want to change the path of the folder then you can change it in the config file.
+To publish the config file follow the below.
+
+- go to config/app.php
+- add the below line in the providers array
+```php
+    Tushar\FileDatabase\FileDatabaseServiceProvider::class,
+```
+
+- run the below command
+
+
+```bash
+    php artisan vendor:publish --provider="Tusharkhan\FileDatabase\FileDatabaseServiceProvider" --tag="fdb-config"
+```
+
+### Database
