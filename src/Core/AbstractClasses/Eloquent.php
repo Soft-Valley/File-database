@@ -371,7 +371,9 @@ abstract class Eloquent
 
         $instance->setQuery(['where', [$instance->getPrimaryKey(), $id]]);
 
-        return (new Query($instance))->filterDataFromModel();
+        $res = (new Query($instance))->filterDataFromModel();
+
+        return (count($res) > 0) ?  reset($res) : collect();
     }
 
     private static function getRelationsOfCalledClass(){
