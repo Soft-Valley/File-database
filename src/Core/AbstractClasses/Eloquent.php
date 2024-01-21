@@ -357,4 +357,41 @@ abstract class Eloquent
     {
         return (new Query($this))->filterDataFromModel();
     }
+
+
+    public static function all()
+    {
+        return (new Query(self::getRelationsOfCalledClass()))->filterDataFromModel();
+    }
+
+
+    public static function find($id)
+    {
+        $instance = self::getRelationsOfCalledClass();
+
+        $instance->setQuery(['where', [$instance->getPrimaryKey(), $id]]);
+
+        $res = (new Query($instance))->filterDataFromModel();
+
+        return (count($res) > 0) ?  reset($res) : collect();
+    }
+
+    private static function getRelationsOfCalledClass(){
+        $reflectCalledClass = new \ReflectionClass(get_called_class());
+        $property = $reflectCalledClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+        $instance = $reflectCalledClass->newInstance();
+
+        $relations = [];
+
+        foreach ($property as $method) {
+            if ( $method->class == get_called_class() && $method->name != '__construct' ){
+                $relations[] = $method->name;
+            }
+        }
+
+        $instance->setWith($relations);
+
+        return $instance;
+    }
 }
