@@ -31,6 +31,26 @@ class Query
         $this->model = $model;
     }
 
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function with(array | string $relation)
+    {
+        if ( is_array($relation) ) {
+            $this->with = $relation;
+        } else {
+            $this->with = explode(',', str_replace(' ', '', $relation));
+        }
+
+        $this->model->setWith($this->with);
+
+        return $this;
+    }
+
+
+
     public function filterDataFromModel(): array|Collection
     {
         $tablePath = $this->model->getTable();
@@ -146,5 +166,12 @@ class Query
 
             return $item;
         });
+    }
+
+    public function where($column, mixed $operator, mixed $value)
+    {
+        $this->model->setQuery('where', [$column, $operator, $value]);
+
+        return $this;
     }
 }

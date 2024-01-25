@@ -8,12 +8,11 @@
 
 namespace Tusharkhan\FileDatabase\Core\MainClasses;
 
-use ArrayIterator;
 use Illuminate\Support\Arr;
 use Tusharkhan\FileDatabase\Core\Interfaces\Eloquent;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent as EloquentAbstract;
 
-class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
+class MainModel extends EloquentAbstract implements  Eloquent
 {
 
     public static function __callStatic(string $name, array $arguments)
@@ -38,11 +37,6 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
             $instance->setQuery([$name, $arguments]);
         else
             $instance->setWith($arguments);
-    }
-
-    public function getIterator()
-    {
-        return new ArrayIterator($this->data);
     }
 
     public static function create($data)
@@ -117,5 +111,22 @@ class MainModel extends EloquentAbstract implements \IteratorAggregate, Eloquent
         }
 
         return $this->insertIntoTable();
+    }
+
+
+    public static function newQuery()
+    {
+        return (new Query(new static()));
+    }
+
+
+    public static function with(array|string $with)
+    {
+        return self::newQuery()->with($with);
+    }
+
+    public static function where($column, $operator = null, $value = null)
+    {
+        return self::newQuery()->where($column, $operator, $value);
     }
 }
