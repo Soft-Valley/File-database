@@ -24,13 +24,9 @@ abstract class Eloquent
 
     protected $with = [];
 
-    protected $model;
-
     protected $data = [];
 
     protected $timestamp = true;
-
-    protected $attribute;
 
     protected $primaryKey = 'id';
 
@@ -41,8 +37,6 @@ abstract class Eloquent
     protected $fillable = ['*'];
 
     protected $append;
-
-    protected $query = [];
 
     protected $dataInsert = [];
 
@@ -77,22 +71,6 @@ abstract class Eloquent
     }
 
     /**
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    /**
-     * @param mixed $model
-     */
-    public function setModel($model): void
-    {
-        $this->model = $model;
-    }
-
-    /**
      * @return array|Collection
      */
     public function getData(): array|Collection
@@ -124,39 +102,6 @@ abstract class Eloquent
     public function setTimestamp(bool $timestamp): void
     {
         $this->timestamp = $timestamp;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAttribute()
-    {
-        return $this->attribute;
-    }
-
-    /**
-     * @param mixed $attribute
-     */
-    public function setAttribute($attribute): void
-    {
-        $this->attribute = $attribute;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isIncrementing(): bool
-    {
-        return $this->incrementing;
-    }
-
-    /**
-     * @param bool $incrementing
-     * @return void
-     */
-    public function setIncrementing(bool $incrementing): void
-    {
-        $this->incrementing = $incrementing;
     }
 
     /**
@@ -315,21 +260,6 @@ abstract class Eloquent
         $this->table = $getTable;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    /**
-     * @param mixed $query
-     */
-    public function setQuery($query): void
-    {
-        $this->query[] = $query;
-    }
 
     public function getWith(): array
     {
@@ -347,51 +277,5 @@ abstract class Eloquent
     public function getTimestamp()
     {
         return $this->timestamp;
-    }
-
-    /**
-     * @return array|Collection
-     * @throws MethodNotFoundException
-     */
-    public function get()
-    {
-        return (new Query($this))->filterDataFromModel();
-    }
-
-
-    public static function all()
-    {
-        return (new Query(self::getRelationsOfCalledClass()))->filterDataFromModel();
-    }
-
-
-    public static function find($id)
-    {
-        $instance = self::getRelationsOfCalledClass();
-
-        $instance->setQuery(['where', [$instance->getPrimaryKey(), $id]]);
-
-        $res = (new Query($instance))->filterDataFromModel();
-
-        return (count($res) > 0) ?  reset($res) : collect();
-    }
-
-    private static function getRelationsOfCalledClass(){
-        $reflectCalledClass = new \ReflectionClass(get_called_class());
-        $property = $reflectCalledClass->getMethods(\ReflectionMethod::IS_PUBLIC);
-
-        $instance = $reflectCalledClass->newInstance();
-
-        $relations = [];
-
-        foreach ($property as $method) {
-            if ( $method->class == get_called_class() && $method->name != '__construct' ){
-                $relations[] = $method->name;
-            }
-        }
-
-        $instance->setWith($relations);
-
-        return $instance;
     }
 }

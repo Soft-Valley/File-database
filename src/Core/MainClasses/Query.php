@@ -12,9 +12,11 @@ use Illuminate\Support\Collection;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent;
 use Tusharkhan\FileDatabase\Core\Exception\MethodNotFoundException;
 use Tusharkhan\FileDatabase\Core\Exception\ModelNotFoundException;
+use Tusharkhan\FileDatabase\Core\Traits\QueryHelper;
 
 class Query
 {
+    use QueryHelper;
 
     protected $model;
 
@@ -29,6 +31,22 @@ class Query
     public function __construct(Eloquent $model)
     {
         $this->model = $model;
+        $tableName = $model->getTable();
+        $this->tableData = collect(getTableData($tableName));
+        $this->model->setData($this->tableData);
+
+        return $this;
+    }
+
+
+    public function getTableData()
+    {
+        return $this->tableData;
+    }
+
+    public function setTableData(Collection $tableData): void
+    {
+        $this->tableData = $tableData;
     }
 
     public function getModel()
@@ -49,39 +67,27 @@ class Query
         return $this;
     }
 
-
-
-    public function filterDataFromModel(): array|Collection
+    /**
+     * @throws MethodNotFoundException
+     */
+    public function get()
     {
-        $tablePath = $this->model->getTable();
-        $this->tableData = collect(getTableData($tablePath));
-
-        $allQuery = $this->model->getQuery();
-
-        $allData = $this->tableData;
-
-        $this->query = $allQuery;
-
-        foreach ($allQuery as $query) {
-            $methodName = $query[0];
-            $arguments = $query[1];
-
-            // check if method exists, if exists then call it with arguments and if not then throw exception
-            if (method_exists(Collection::class, $methodName)) {
-                $allData = $allData->$methodName(...$arguments);
-
-            } else {
-                throw new MethodNotFoundException($methodName, $this->model::class);
-            }
-        }
-
-        $this->model->setData($allData);
-
-        $this->addRelationsData();
-
-        return $this->model->getData();
+        return $this->filterDataFromModel()->all();
     }
 
+    /**
+     * @throws MethodNotFoundException
+     */
+    public function filterDataFromModel(): array|Collection
+    {
+        $this->addRelationsData();
+
+        return $this->getTableData();
+    }
+
+    /**
+     * @throws MethodNotFoundException
+     */
     public function addRelationsData()
     {
         $this->with = $this->model->getWith();
@@ -103,11 +109,9 @@ class Query
         $this->currentWithName = $relation;
         $relationData = $this->model->$relation();
 
-        $this->relations = $this->model->getRelations();
-
         $relationData = $this->getRelationData($relationData);
 
-        $this->model->setData($relationData);
+        $this->setTableData($relationData);
     }
 
     private function getRelationData(mixed $relation)
@@ -166,12 +170,5 @@ class Query
 
             return $item;
         });
-    }
-
-    public function where($column, mixed $operator, mixed $value)
-    {
-        $this->model->setQuery('where', [$column, $operator, $value]);
-
-        return $this;
     }
 }
