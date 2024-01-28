@@ -84,7 +84,9 @@ trait QueryHelper
      */
     public function first()
     {
-        return (count($this->get()) > 0) ? $this->get()[0] : null;
+        $getData = $this->get();
+        $values = $getData->values();
+        return (count($values) > 0) ? $getData->first() : null;
     }
 
     /**

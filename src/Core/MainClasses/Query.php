@@ -72,7 +72,7 @@ class Query
      */
     public function get()
     {
-        return $this->filterDataFromModel()->all();
+        return $this->filterDataFromModel();
     }
 
     /**
@@ -118,13 +118,9 @@ class Query
     {
         $relationModel = $this->getRelationModel($relation);
 
-        $relationTable = $relationModel->getTable();
+        $relationTableData = $relationModel::all();
 
-        $relationTableData = getTableData($relationTable);
-
-        $relationTableData = collect($relationTableData);
-
-        return $this->filterRelationData($relationTableData, $relationModel, $relation);
+        return $this->filterRelationData($relationTableData, $relation);
     }
 
     private function getRelationModel(mixed $relation)
@@ -144,7 +140,7 @@ class Query
         return new $relationModel();
     }
 
-    private function filterRelationData(Collection $relationTableData, mixed $relationModel, mixed $relation)
+    private function filterRelationData(Collection $relationTableData, mixed $relation)
     {
         $foreignKey = $relation[$this->currentRelationName]['foreignKey'];
         $localKey = $relation[$this->currentRelationName]['localKey'];
@@ -154,11 +150,11 @@ class Query
 
     private function addRelationDataByKey(Collection $relationTableData,  $foreignKey, $localKey)
     {
-        return $this->model->getData()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
+        return $this->getTableData()->values()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
             switch ($this->currentRelationName) {
                 case 'belongsTo':
                 case 'hasOne':
-                    $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->first();
+                    $item[$this->currentWithName] = collect($relationTableData->where($localKey, $item[$foreignKey])->first());
                     break;
                 case 'hasMany':
                     $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->values();
