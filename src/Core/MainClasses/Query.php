@@ -12,9 +12,11 @@ use Illuminate\Support\Collection;
 use Tusharkhan\FileDatabase\Core\AbstractClasses\Eloquent;
 use Tusharkhan\FileDatabase\Core\Exception\MethodNotFoundException;
 use Tusharkhan\FileDatabase\Core\Exception\ModelNotFoundException;
+use Tusharkhan\FileDatabase\Core\Traits\QueryHelper;
 
 class Query
 {
+    use QueryHelper;
 
     protected $model;
 
@@ -29,39 +31,63 @@ class Query
     public function __construct(Eloquent $model)
     {
         $this->model = $model;
+        $tableName = $model->getTable();
+        $this->tableData = collect(getTableData($tableName));
+        $this->model->setData($this->tableData);
+
+        return $this;
     }
 
-    public function filterDataFromModel(): array|Collection
+
+    public function getTableData()
     {
-        $tablePath = $this->model->getTable();
-        $this->tableData = collect(getTableData($tablePath));
+        return $this->tableData;
+    }
 
-        $allQuery = $this->model->getQuery();
+    public function setTableData(Collection $tableData): void
+    {
+        $this->tableData = $tableData;
+    }
 
-        $allData = $this->tableData;
+    public function getModel()
+    {
+        return $this->model;
+    }
 
-        $this->query = $allQuery;
-
-        foreach ($allQuery as $query) {
-            $methodName = $query[0];
-            $arguments = $query[1];
-
-            // check if method exists, if exists then call it with arguments and if not then throw exception
-            if (method_exists(Collection::class, $methodName)) {
-                $allData = $allData->$methodName(...$arguments);
-
-            } else {
-                throw new MethodNotFoundException($methodName, $this->model::class);
-            }
+    public function with(array | string $relation)
+    {
+        if ( is_array($relation) ) {
+            $this->with = $relation;
+        } else {
+            $this->with = explode(',', str_replace(' ', '', $relation));
         }
 
-        $this->model->setData($allData);
+        $this->model->setWith($this->with);
 
-        $this->addRelationsData();
-
-        return $this->model->getData();
+        return $this;
     }
 
+    /**
+     * @throws MethodNotFoundException
+     */
+    public function get()
+    {
+        return $this->filterDataFromModel();
+    }
+
+    /**
+     * @throws MethodNotFoundException
+     */
+    public function filterDataFromModel(): array|Collection
+    {
+        $this->addRelationsData();
+
+        return $this->getTableData();
+    }
+
+    /**
+     * @throws MethodNotFoundException
+     */
     public function addRelationsData()
     {
         $this->with = $this->model->getWith();
@@ -83,24 +109,18 @@ class Query
         $this->currentWithName = $relation;
         $relationData = $this->model->$relation();
 
-        $this->relations = $this->model->getRelations();
-
         $relationData = $this->getRelationData($relationData);
 
-        $this->model->setData($relationData);
+        $this->setTableData($relationData);
     }
 
     private function getRelationData(mixed $relation)
     {
         $relationModel = $this->getRelationModel($relation);
 
-        $relationTable = $relationModel->getTable();
+        $relationTableData = $relationModel::all();
 
-        $relationTableData = getTableData($relationTable);
-
-        $relationTableData = collect($relationTableData);
-
-        return $this->filterRelationData($relationTableData, $relationModel, $relation);
+        return $this->filterRelationData($relationTableData, $relation);
     }
 
     private function getRelationModel(mixed $relation)
@@ -120,7 +140,7 @@ class Query
         return new $relationModel();
     }
 
-    private function filterRelationData(Collection $relationTableData, mixed $relationModel, mixed $relation)
+    private function filterRelationData(Collection $relationTableData, mixed $relation)
     {
         $foreignKey = $relation[$this->currentRelationName]['foreignKey'];
         $localKey = $relation[$this->currentRelationName]['localKey'];
@@ -130,11 +150,11 @@ class Query
 
     private function addRelationDataByKey(Collection $relationTableData,  $foreignKey, $localKey)
     {
-        return $this->model->getData()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
+        return $this->getTableData()->values()->map(function ($item) use ($foreignKey, $relationTableData, $localKey) {
             switch ($this->currentRelationName) {
                 case 'belongsTo':
                 case 'hasOne':
-                    $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->first();
+                    $item[$this->currentWithName] = collect($relationTableData->where($localKey, $item[$foreignKey])->first());
                     break;
                 case 'hasMany':
                     $item[$this->currentWithName] = $relationTableData->where($localKey, $item[$foreignKey])->values();
