@@ -20,14 +20,69 @@ To publish the config file follow the below.
 - go to config/app.php
 - add the below line in the providers array
 ```php
-    Tushar\FileDatabase\FileDatabaseServiceProvider::class,
+    'providers' => ServiceProvider::defaultProviders()->merge([
+        /*
+         * Package Service Providers...
+         */
+            \Tusharkhan\FileDatabase\FileDatabaseServiceProvider::class,
+        /*
+         * Application Service Providers...
+         */
 ```
 
 - run the below command
 
 
 ```bash
-    php artisan vendor:publish --provider="Tusharkhan\FileDatabase\FileDatabaseServiceProvider" --tag="fdb-config"
+    php artisan vendor:publish --tag="fdb-config"
 ```
 
 ### Database
+ 
+#### Create Migration
+
+```bash
+    php artisan fdb:migration name={migration_file_name}
+```
+
+- name: Name of the migration file
+- To ceate a new table use --create={table_name} option like below
+```bash
+    php artisan fdb:migration name={migration_file_name} --create={table_name}
+```
+- To update a table use --update={table_name} option like below
+```bash
+    php artisan fdb:migration name={migration_file_name} --update={table_name}
+```
+- To drop a table use --drop={table_name} option like below
+```bash
+    php artisan fdb:migration name={migration_file_name} --drop={table_name}
+```
+
+#### Run Migration
+
+- Run all the migrations
+```bash
+    php artisan fdb:migrate
+```
+- Run a fresh migration
+```bash
+    php artisan fdb:migrate --fresh
+```
+
+
+## Model
+
+### Create Model
+For creating a model you can use the below command
+
+```bash
+    php artisan fdb:model name={model_name}
+```
+
+If you want to create a model with migration then you can use the --m option like below
+
+```bash
+    php artisan fdb:model name={model_name} --m
+```
+
